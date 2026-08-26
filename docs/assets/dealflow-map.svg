@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 380" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <rect width="900" height="380" fill="#f8f9fb"/>
+
+  <!-- Column headers -->
+  <text x="130" y="36" font-size="15" font-weight="600" fill="#57606a" text-anchor="middle">Where deal flow lives today</text>
+  <text x="450" y="36" font-size="15" font-weight="600" fill="#24292f" text-anchor="middle">One memory, yours</text>
+  <text x="770" y="36" font-size="15" font-weight="600" fill="#57606a" text-anchor="middle">Everything that reads it</text>
+
+  <!-- Silos (left) -->
+  <g font-size="13" fill="#24292f">
+    <rect x="40" y="56"  width="180" height="40" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+    <text x="130" y="81" text-anchor="middle">Meeting transcripts</text>
+    <rect x="40" y="106" width="180" height="40" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+    <text x="130" y="131" text-anchor="middle">LinkedIn DMs</text>
+    <rect x="40" y="156" width="180" height="40" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+    <text x="130" y="181" text-anchor="middle">WhatsApp threads</text>
+    <rect x="40" y="206" width="180" height="40" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+    <text x="130" y="231" text-anchor="middle">Calendar + email</text>
+    <rect x="40" y="256" width="180" height="40" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+    <text x="130" y="281" text-anchor="middle">Notes apps</text>
+    <rect x="40" y="306" width="180" height="40" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+    <text x="130" y="331" text-anchor="middle">Your own head</text>
+  </g>
+  <text x="130" y="368" font-size="11" fill="#8b949e" text-anchor="middle">siloed · unsearchable together · forgotten</text>
+
+  <!-- Arrows silos -> memory -->
+  <g stroke="#8b949e" stroke-width="1.5" fill="none" marker-end="url(#arrow)">
+    <path d="M222 76  C 270 76,  290 140, 328 158"/>
+    <path d="M222 126 C 265 126, 285 150, 328 168"/>
+    <path d="M222 176 C 265 176, 285 180, 328 182"/>
+    <path d="M222 226 C 265 226, 285 205, 328 196"/>
+    <path d="M222 276 C 265 276, 285 225, 328 208"/>
+    <path d="M222 326 C 270 326, 290 245, 328 220"/>
+  </g>
+  <text x="272" y="140" font-size="11" fill="#57606a" text-anchor="middle">"log my call</text>
+  <text x="272" y="154" font-size="11" fill="#57606a" text-anchor="middle">with Jane"</text>
+
+  <!-- Center: Fulcra memory -->
+  <rect x="330" y="120" width="240" height="150" rx="12" fill="#ffffff" stroke="#0969da" stroke-width="2"/>
+  <text x="450" y="148" font-size="14" font-weight="600" fill="#0969da" text-anchor="middle">Your Fulcra account</text>
+  <text x="450" y="170" font-size="12" fill="#24292f" text-anchor="middle">/dealflow/ memory</text>
+  <g font-size="11.5" fill="#57606a">
+    <text x="450" y="196" text-anchor="middle">narrative files you can read</text>
+    <text x="450" y="214" text-anchor="middle">+ typed records software can query</text>
+    <text x="450" y="238" text-anchor="middle">deduped · provenance-stamped</text>
+    <text x="450" y="256" text-anchor="middle">versioned · yours, not a vendor's</text>
+  </g>
+
+  <!-- Arrows memory -> consumers -->
+  <g stroke="#8b949e" stroke-width="1.5" fill="none" marker-end="url(#arrow)">
+    <path d="M572 160 C 615 150, 630 115, 668 100"/>
+    <path d="M572 190 C 615 190, 630 175, 668 168"/>
+    <path d="M572 220 C 615 225, 630 240, 668 240"/>
+    <path d="M572 245 C 615 260, 630 300, 668 308"/>
+  </g>
+
+  <!-- Consumers (right) -->
+  <g font-size="13" fill="#24292f">
+    <rect x="670" y="76"  width="200" height="44" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+    <text x="770" y="94" text-anchor="middle">Claude</text>
+    <text x="770" y="111" font-size="11" fill="#57606a" text-anchor="middle">"prep me for Jane"</text>
+    <rect x="670" y="146" width="200" height="44" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+    <text x="770" y="164" text-anchor="middle">ChatGPT, Gemini, any MCP AI</text>
+    <text x="770" y="181" font-size="11" fill="#57606a" text-anchor="middle">same memory, no re-teaching</text>
+    <rect x="670" y="216" width="200" height="44" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+    <text x="770" y="234" text-anchor="middle">Weekly review</text>
+    <text x="770" y="251" font-size="11" fill="#57606a" text-anchor="middle">"what moved" · founders going quiet</text>
+    <rect x="670" y="286" width="200" height="44" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+    <text x="770" y="304" text-anchor="middle">Your CRM</text>
+    <text x="770" y="321" font-size="11" fill="#57606a" text-anchor="middle">optional one-way notes</text>
+  </g>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b949e"/>
+    </marker>
+  </defs>
+</svg>
