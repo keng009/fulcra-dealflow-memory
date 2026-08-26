@@ -41,13 +41,18 @@ const contract = read(CONTRACT);
 const demo = read(SKILLS[0]);
 const full = read(SKILLS[1]);
 const SHARED = [
-  ['payload signature', '`{"dedupe_key","person","firm","channel":"call|meeting|email|event|other","summary","follow_ups":[],"producer","evidence","recorded_at"}`', [demo, full]],
+  ['payload signature', '`{"dedupe_key","person","company","channel":"call|meeting|email|event|other","summary","stage_noted","follow_ups":[],"producer","evidence","recorded_at"}`', [demo, full]],
   ["base key format", "`touch:<person-slug>:<YYYY-MM-DD>`", [demo, full]],
   ["provenance suffix format", "`[<producer> | <evidence> | <ISO-8601 timestamp with timezone>]`", [demo, full]],
   ["channel enum", "`call`, `meeting`, `email`, `event`, `other`", [demo, full]],
-  ["slug rule", "lowercase, hyphens, from person name (`jane-doe`); append firm slug only when two people collide (`jane-doe-acme`)", [demo, full]],
+  ["slug rule", "lowercase, hyphens, from person name (`jane-doe`); append company slug only when two people collide (`jane-doe-acme`)", [demo, full]],
   ["same-day ordinal", "-2", [demo, full]],
+  ["stage-noted template line", "Stage noted:", [demo, full]],
 ];
+// contract v2.1: the old "firm" payload token must be gone from contract-bearing files
+for (const [i, t] of [contract, demo, full].entries()) {
+  if (t.includes('"firm"')) fail(`contract v2.1: "firm" payload token still present in ${[CONTRACT, ...SKILLS][i === 0 ? 0 : i]}`);
+}
 for (const [label, needle, targets] of SHARED) {
   if (!contract.includes(needle)) { fail(`contract drift: ${CONTRACT} itself lacks the canonical ${label}: ${needle}`); continue; }
   targets.forEach((t, i) => {

@@ -29,6 +29,7 @@ Context: one line on who they are and why they matter.
 ## Touchpoints
 ### 2026-08-20 — call [touch:jane-doe:2026-08-20]
 Summary: 2-5 sentences.
+Stage noted: evaluating
 Follow-ups: ...
 [dealflow-memory | user account, calendar 2026-08-20 | 2026-08-20T17:30-04:00]
 ```
@@ -36,6 +37,7 @@ Follow-ups: ...
 Rules:
 
 - Touchpoints are ordered newest first.
+- The `Stage noted:` line appears only when the user volunteered where the deal stands (see the stage_noted payload field below) — never ask a dedicated question to fill it.
 - Keep each file to roughly two pages. When it grows past that, consolidate the oldest touchpoints into a single `### Earlier` digest at the bottom — a few summary lines, keeping the dedupe key of each consolidated touchpoint listed so a dedupe scan still finds it.
 - Every touchpoint carries its dedupe key in the heading and a provenance suffix as its last line (formats below).
 
@@ -47,7 +49,7 @@ Exact formats:
 - Additional same-day touchpoints: append the next unused ordinal — `touch:<person-slug>:<YYYY-MM-DD>-2`, then `-3`, and so on. Two real conversations with the same person on the same day are two touchpoints, not a duplicate.
 - Source Level 3 (touchpoint logged from a meeting transcript): `touch:<transcript-id>` — the transcript's own id, so re-processing the same transcript cannot create a duplicate.
 
-Person slug rule: lowercase, hyphens, from person name (`jane-doe`); append firm slug only when two people collide (`jane-doe-acme`).
+Person slug rule: lowercase, hyphens, from person name (`jane-doe`); append company slug only when two people collide (`jane-doe-acme`).
 
 Where the key appears:
 
@@ -68,7 +70,7 @@ The rules:
 - Creation: create-if-absent. Check `get_data_catalog` for an existing `Dealflow Touchpoint` type first; call `create_data_type` only if it is not there. Safe on re-runs.
 - Record payload: a MomentAnnotation record carries its structured payload as JSON in the record's note field. The payload fields:
 
-  `{"dedupe_key","person","firm","channel":"call|meeting|email|event|other","summary","follow_ups":[],"producer","evidence","recorded_at"}`
+  `{"dedupe_key","person","company","channel":"call|meeting|email|event|other","summary","stage_noted","follow_ups":[],"producer","evidence","recorded_at"}`
 
   A filled example:
 
@@ -76,9 +78,10 @@ The rules:
   {
     "dedupe_key": "touch:jane-doe:2026-08-20",
     "person": "Jane Doe",
-    "firm": "Acme Ventures",
+    "company": "Acme Ventures",
     "channel": "call",
     "summary": "2-5 sentences on what was discussed and any decisions.",
+    "stage_noted": "evaluating",
     "follow_ups": ["Send the Q3 memo"],
     "producer": "dealflow-memory",
     "evidence": "user account, calendar 2026-08-20",
@@ -87,6 +90,8 @@ The rules:
   ```
 
 - `dedupe_key` is the touchpoint's key (formats above) — it is what the per-destination record scan matches on.
+- `company` is the company the person belongs to — a founder's startup or an investor's fund.
+- `stage_noted` is OPTIONAL — a deal-stage observation from what the user said, omitted entirely when they didn't indicate one. Suggested vocabulary: `sourced`, `evaluating`, `partner-meeting`, `term-sheet`, `passed`, `portfolio`; free text is allowed. It is narrative — an as-of-that-conversation observation, never managed pipeline state, and it is NEVER written to CRM stage or field values (the user's CRM remains the system of record for pipeline; see ADR-0004).
 - `channel` is exactly one of: `call`, `meeting`, `email`, `event`, `other`.
 - `follow_ups` is an array of strings; an empty array when there are none.
 - `producer`, `evidence`, `recorded_at` are the provenance trio (see Provenance).

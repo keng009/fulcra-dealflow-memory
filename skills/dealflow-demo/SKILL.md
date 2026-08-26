@@ -51,15 +51,15 @@ If the catalog is sparse (a brand-new account), say so plainly and keep going �
 
 ### Ask
 
-Ask about a recent conversation with a founder, LP, or co-investor. At most five questions, and if they answer several at once — or paste notes — extract what you need and don't re-ask:
+Ask about a recent conversation with a founder — or, failing that, a co-investor or anyone else in their deal-flow network. At most five questions, and if they answer several at once — or paste notes — extract what you need and don't re-ask:
 
-1. Who was it with, and what firm?
+1. Who was it with, and what company?
 2. How did you talk — call, meeting, email, event, or something else?
 3. When was it?
 4. What was discussed — a few sentences?
 5. Any follow-ups you own?
 
-If they have nothing to log, offer the sample touchpoint and say clearly that it is sample data — including, BEFORE they agree: the sample file can be deleted afterward (a soft delete), but the sample typed record has no per-record delete through this connector and will simply sit inert in their account, labeled as sample. The sample: person **Jane Doe**, firm **Acme Ventures** (GP), channel `call`, dated yesterday, summary "Sample: intro call covering Acme's fund focus and a possible seed co-invest; Jane offered to share their diligence checklist.", follow-up "Send Jane the deck (sample)". In the file, its Context line must read: `Sample contact created by the dealflow-demo skill — not a real person. Delete freely.`
+If they have nothing to log, offer the sample touchpoint and say clearly that it is sample data — including, BEFORE they agree: the sample file can be deleted afterward (a soft delete), but the sample typed record has no per-record delete through this connector and will simply sit inert in their account, labeled as sample. The sample: person **Jane Doe**, company **Acme Ventures** (GP), channel `call`, dated yesterday, summary "Sample: intro call covering Acme's fund focus and a possible seed co-invest; Jane offered to share their diligence checklist.", stage noted `evaluating` (volunteered), follow-up "Send Jane the deck (sample)". In the file, its Context line must read: `Sample contact created by the dealflow-demo skill — not a real person. Delete freely.`
 
 Sample re-run rule: because the sample is dated relative to today, its exact key changes between days — so for the sample touchpoint, the dedupe scan matches ANY existing `touch:jane-doe:` key or the sample Context marker line, not just today's key. A re-run must never add a second sample block.
 
@@ -67,7 +67,7 @@ Before writing anything, recap in one line (person, firm, channel, date, gist, f
 
 ### Compute the slug and key
 
-- Person slug: lowercase, hyphens, from person name (`jane-doe`); append firm slug only when two people collide (`jane-doe-acme`).
+- Person slug: lowercase, hyphens, from person name (`jane-doe`); append company slug only when two people collide (`jane-doe-acme`).
 - Dedupe key: `touch:<person-slug>:<YYYY-MM-DD>` — the date the touchpoint occurred. (Additional same-day touchpoints append the next unused ordinal — `-2`, `-3` — per the data contract.)
 
 ### Scan before writing
@@ -88,9 +88,12 @@ Context: one line on who they are and why they matter.
 ## Touchpoints
 ### 2026-08-20 — call [touch:jane-doe:2026-08-20]
 Summary: 2-5 sentences.
+Stage noted: evaluating
 Follow-ups: ...
 [dealflow-demo | user account | 2026-08-20T17:30-04:00]
 ```
+
+The `Stage noted:` line appears only when the user volunteered where the deal stands — never ask a dedicated question to fill it.
 
 The last line of every touchpoint is its provenance suffix, in exactly this format: `[<producer> | <evidence> | <ISO-8601 timestamp with timezone>]` — the timestamp is when the entry was written.
 
@@ -124,7 +127,7 @@ this folder.
 
 - README.md — what this folder is and the rules for writing to it
 - INDEX.md — this file
-- relationships/<slug>.md — <Person Name> (<Firm>)
+- relationships/<slug>.md — <Person Name> (<Company>)
 ```
 
 If `INDEX.md` already exists, add one line for the relationship file you just created (if it's new) and leave the rest untouched.
@@ -135,17 +138,18 @@ Check the `get_data_catalog` result from step 2 for an existing **Dealflow Touch
 
 Then `record_data` one Dealflow Touchpoint. A MomentAnnotation record carries its structured payload as JSON in the record's note field. The payload fields:
 
-`{"dedupe_key","person","firm","channel":"call|meeting|email|event|other","summary","follow_ups":[],"producer","evidence","recorded_at"}`
+`{"dedupe_key","person","company","channel":"call|meeting|email|event|other","summary","stage_noted","follow_ups":[],"producer","evidence","recorded_at"}`
 
-Schema example — fill every field from the touchpoint actually captured above (shown here filled with the sample touchpoint's values):
+Schema example — fill every field from the touchpoint actually captured above (shown here filled with the sample touchpoint's values). `stage_noted` is optional: a deal-stage observation from what the user said, omitted entirely when they didn't indicate one — narrative only, never managed pipeline state:
 
 ```json
 {
   "dedupe_key": "touch:jane-doe:2026-08-20",
   "person": "Jane Doe",
-  "firm": "Acme Ventures",
+  "company": "Acme Ventures",
   "channel": "call",
   "summary": "Sample: intro call covering Acme's fund focus and a possible seed co-invest; Jane offered to share their diligence checklist.",
+  "stage_noted": "evaluating",
   "follow_ups": ["Send Jane the deck (sample)"],
   "producer": "dealflow-demo",
   "evidence": "user account",
