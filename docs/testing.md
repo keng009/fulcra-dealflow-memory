@@ -28,9 +28,23 @@ Dated, sanitized record of what has actually been tested against live services. 
 
 Re-processing an identical batch against already-written notes produced **zero new writes** — every item's key was found by the per-destination scan.
 
-## Contract v2 delta (2026-08-21) — not yet separately live-tested
+## 2026-08-26 — Contract v2.1 live pass (official Fulcra connector, claude.ai)
 
-The 2026-08-21 contract revision added the `dedupe_key` payload field, same-day ordinal keys, and per-destination reconciliation. Contract v2.1 (2026-08-26) renamed `firm` → `company` and added the optional `stage_noted` observation field (ADR-0004). The underlying mechanisms (JSON-in-note payloads, title scans) are identical to what passed above; the new fields and flows have **not yet** been re-run live. Next live pass should cover: a same-day second touchpoint (ordinal assignment), a simulated file-success/record-failure retry (self-healing fill), an ambiguous CRM contact match (skip-and-say-so), and a volunteered-stage capture surfacing in the report's stage-movement line.
+Run against a fresh-state account (`/dealflow/` empty, no Dealflow Touchpoint type — the exact posture of a new investor account).
+
+| Test | Result |
+|---|---|
+| Create-if-absent on a clean catalog (`base_type: "moment"`) | Pass |
+| First capture: dual write with `company` field and volunteered `stage_noted` in both representations | Pass — payload round-trips intact |
+| Same-day second touchpoint: ordinal key `touch:<slug>:<date>-2` as its own touchpoint | Pass — both retained, distinct keys in file headings and payloads |
+| Duplicate retry: base key found in file AND records → zero writes | Pass |
+| Self-healing partial write: entry `-3` present in file, record missing → retry wrote ONLY the missing record, file untouched | Pass |
+| Stage movement data for Report: `evaluating` → `term-sheet` across same-day records, parseable per company | Pass |
+| Cleanup: soft delete + type archive | Pass — reversible |
+
+Folder initialization (README/INDEX templates) was covered by the 2026-08-20 pass; not re-run.
+
+**Still untested**: an ambiguous CRM contact match (skip-and-say-so), and the demo skill run through Claude's actual zip-upload UI end-to-end — the latter is a human step (upload, say "run the Fulcra dealflow demo", complete a session) and should be done once before any investor walkthrough.
 
 ## Untested surfaces (labeled accordingly in-product)
 

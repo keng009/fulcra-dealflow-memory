@@ -4,7 +4,7 @@ Two Claude skills that give your deal flow a memory, on your own [Fulcra](https:
 
 ## See it in 10 minutes — `dealflow-demo`
 
-One guided session — about ten minutes once installed. The skill inspects your Fulcra data catalog, captures one real touchpoint from your world, writes it into your account in both forms, and generates a prep brief from what it just stored.
+One guided session — about ten minutes once installed. The skill inspects your Fulcra data catalog, captures one real touchpoint from your world, writes it into your account in both forms, and generates a prep brief from what it just stored. Think of it as the hello-world; `dealflow-memory` below is the product.
 
 1. Create a Fulcra account at [fulcra.ai](https://fulcra.ai) if you don't have one. An empty account is fine — the demo works without prior data.
 2. In Claude, open **Customize → Connectors** and connect **Fulcra**.
@@ -40,6 +40,32 @@ Illustrative — the catalog lines reflect whatever your account actually holds,
 > **Claude:** Written: `/dealflow/relationships/jane-doe.md`, newest touchpoint on top. Created: `/dealflow/README.md` and `INDEX.md` — first run only. Created: a **Dealflow Touchpoint** data type in your account — it didn't exist a minute ago. Recorded: one typed touchpoint against it. The same fact now exists twice — prose you can read, and a structured record other software can query. Reading it back for your prep brief…
 
 The brief that follows is generated from the stored data, not from the conversation: the skill reads the file back and checks that the record round-trips before it summarizes.
+
+## What this looks like in real life
+
+![Deal flow scattered across silos flows into one Fulcra memory that every assistant and your CRM can read](docs/assets/dealflow-map.svg)
+
+This packet is the productized version of a system the author runs on his own account every day: meeting transcripts get logged into his CRM and his Fulcra memory on a schedule; touchpoints from the channels no CRM integrates well — LinkedIn DMs, WhatsApp threads — get captured by telling Claude about them; and every assistant he uses reads the same memory. The pattern survives tool changes: switch transcript tools or CRMs and the memory stays, because it lives in your account, not a vendor's.
+
+Illustrative output — the demo generates one of these from your own logged touchpoint:
+
+> **Prep brief — Jane Doe (Acme Ventures)**
+> **Who:** GP at Acme Ventures; intro call in August. Diligence-minded, offered their checklist unprompted.
+> **Last touchpoint:** call, Aug 20 — seed co-invest discussion.
+> **Stage noted (last):** evaluating — per your notes.
+> **Open follow-ups:** you owe her the deck.
+> **Talking points:** her diligence-checklist offer; the co-invest allocation question left open on the call.
+
+## Make it yours
+
+The memory is the product; these two skills are just the first things built on it. Once your touchpoints live in `/dealflow/`, extensions are one ask away — literally ask Claude:
+
+- *"Every evening, recap today's touchpoints and what I owe people"* — an end-of-day recap.
+- *"Each morning, brief me on today's meetings — pull my calendar and what my memory has on each person"* — a morning brief.
+- *"Log this"* with anything pasted from Telegram, Signal, or wherever your deal flow actually happens — channels no CRM integrates.
+- Point a second assistant at the same account — your ChatGPT reads the same files Claude writes.
+
+None of these require changing the skills: the data contract is [documented](skills/dealflow-memory/references/conventions.md), and anything that can read your Fulcra account can build on it.
 
 ## Already have a CRM?
 
