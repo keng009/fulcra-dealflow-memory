@@ -37,7 +37,7 @@ Check whether the Fulcra tools are available in this session: `get_data_catalog`
 
 If they are not, stop the demo entirely and say:
 
-> To run this demo I need your Fulcra account connected: in Claude, open Settings → Connectors and add Fulcra, then say "run the Fulcra dealflow demo" again. No Fulcra account yet? Create one at fulcra.ai first.
+> To run this demo I need your Fulcra account connected: in Claude, open Customize → Connectors and add Fulcra, then say "run the Fulcra dealflow demo" again. No Fulcra account yet? Create one at fulcra.ai first.
 
 Do not proceed past a missing connector. Do not describe what the demo *would* have done.
 
@@ -63,7 +63,7 @@ If they have nothing to log, offer the sample touchpoint and say clearly that it
 
 Sample re-run rule: because the sample is dated relative to today, its exact key changes between days — so for the sample touchpoint, the dedupe scan matches ANY existing `touch:jane-doe:` key or the sample Context marker line, not just today's key. A re-run must never add a second sample block.
 
-Before writing anything, recap in one line (person, firm, channel, date, gist, follow-ups) and ask "Good to store?" On a yes, do all the writes below without further pauses, narrating each in a single short line.
+Before writing anything, recap in one line (person, company, channel, date, gist, follow-ups) and ask "Good to store?" On a yes, do all the writes below without further pauses, narrating each in a single short line.
 
 ### Compute the slug and key
 
@@ -168,7 +168,7 @@ One line of narration for the pair of writes: the same fact now exists twice —
 
 Generate a prep brief for that person **from the stored data, not from this conversation**: `read_file` the relationship file back, and `get_records` for Dealflow Touchpoint to check the record round-trips (mention the check in half a sentence). Fulcra reads can briefly lag writes: if a read-back comes back empty or stale, say so in half a sentence, retry once, and if it still lags, build the brief from the content you just successfully wrote — a lagging read is not a failed write, and this step never declares failure over one. Then produce, under 150 words:
 
-**Prep brief — [Person] ([Firm])**
+**Prep brief — [Person] ([Company])**
 - Who they are (the Context line)
 - Last touchpoint: date, channel, one-line summary
 - Open follow-ups
