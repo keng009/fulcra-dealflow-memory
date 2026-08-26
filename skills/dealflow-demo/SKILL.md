@@ -2,16 +2,14 @@
 name: dealflow-demo
 description: >-
   Use when the user asks to run the Fulcra dealflow demo or wants a guided
-  10-minute tour of Fulcra as deal-flow memory — trigger phrases include
-  "run the Fulcra dealflow demo", "dealflow demo", "show me the Fulcra demo",
-  "give me the 10-minute Fulcra tour", "try Fulcra with my deal flow", or an
-  investor who just installed this skill packet asking to see what Fulcra can
-  do with their own account. Runs one scripted session — inspects their Fulcra
-  data catalog, captures one real founder/LP/co-investor touchpoint, stores it
-  in their account as both a narrative file and a typed record, then generates
-  a prep brief from what was stored. For the ongoing daily workflow (logging
-  calls, meeting prep, weekly review), use dealflow-memory instead.
+  10-minute tour of Fulcra as deal-flow memory: capture one real touchpoint,
+  store it, and get a prep brief built from it.
 ---
+
+<!-- Trigger phrases: "run the Fulcra dealflow demo", "dealflow demo", "show me the
+     Fulcra demo", "try Fulcra with my deal flow". For the ongoing daily workflow
+     (logging calls, meeting prep, weekly review), use dealflow-memory instead.
+     (Description is capped at 200 characters by Claude's custom-skill limit.) -->
 
 <!-- Canonical conventions: skills/dealflow-memory/references/conventions.md in the fulcra-dealflow-memory repo.
      This demo embeds the minimal subset it needs so it runs self-contained; wherever the two differ, that file wins. -->

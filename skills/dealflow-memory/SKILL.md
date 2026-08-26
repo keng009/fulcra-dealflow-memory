@@ -1,19 +1,18 @@
 ---
 name: dealflow-memory
 description: >-
-  Use when the user wants to log, recall, or review their deal-flow
-  relationships — founders, fund partners, LPs, co-investors — using their
-  Fulcra account as memory. Trigger on capture requests like "log my call with
-  Jane", "log my meeting with the Acme founders", "I just got off a call
-  with…", or a pasted block of meeting notes to file; on recall requests like
-  "prep me for Jane", "prep me for tomorrow", "what do I know about Acme
-  Ventures", "when did I last talk to…"; on reporting requests like "what moved
-  this week", "what moved this month", "deal-flow review", "who have I gone
-  quiet on", "which relationships are going stale"; and on requests to sync
-  logged touchpoints to a connected CRM. Anything logged during the
-  dealflow-demo skill is picked up here with no migration — but for a guided
-  first-time demo session, use dealflow-demo instead of this skill.
+  Use when the user wants to log, recall, or review deal-flow relationships
+  in their Fulcra account: log my call with Jane, prep me for X, what moved
+  this week, who went quiet, or sync to their CRM.
 ---
+
+<!-- Trigger phrases: capture — "log my call/meeting with…", "I just got off a call
+     with…", a pasted block of meeting notes; recall — "prep me for…", "what do I
+     know about…", "when did I last talk to…"; reporting — "what moved this
+     week/month", "deal-flow review", "who have I gone quiet on". Anything logged by
+     dealflow-demo is picked up here with no migration; for a guided first-time demo
+     session, use dealflow-demo instead.
+     (Description is capped at 200 characters by Claude's custom-skill limit.) -->
 
 # dealflow-memory
 

@@ -45,27 +45,28 @@ Tested against a live Attio workspace via the official Attio connector. This is 
 - Connector tool names can vary slightly between connector versions; match by capability (contact search, list notes on a record, create note, create task) if the names above are not present.
 - The Attio connector has no delete tool. If the user wants a synced note removed, they delete it in the Attio UI.
 
-## HubSpot (designed for, untested)
+## HubSpot (designed for, untested — official connector cannot sync)
 
 Same principles; not yet verified against a live workspace.
 
+- **Important**: Claude's official HubSpot connector is **read-only** (verified 2026-08-21) — it cannot create notes, so it cannot carry this sync. HubSpot sync applies only when the user has a separate **write-capable HubSpot MCP server** connected. Detect by capability (can it create a note engagement?), not by connector name; with only the read-only connector present, say so and skip HubSpot sync entirely.
 - **Closest primitive**: a note engagement associated with a contact.
-- HubSpot notes may not have a separate title field. If the connector's note primitive has no title, put the key as the **first line of the note body**, and run the dedupe scan against whatever note field the connector returns when listing a contact's notes. The rule generalizes: the key must live in a field the connector can both write and read back.
-- On first use, verify the round trip: after creating the first note, read the contact's notes back and confirm the key is findable. If it is not, stop syncing and tell the user dedupe cannot be guaranteed with this connector.
+- HubSpot notes may not have a separate title field. If the tool's note primitive has no title, put the key as the **first line of the note body**, and run the dedupe scan against whatever note field the tools return when listing a contact's notes. The rule generalizes: the key must live in a field the tools can both write and read back.
+- On first use, verify the round trip: after creating the first note, read the contact's notes back and confirm the key is findable. If it is not, stop syncing and tell the user dedupe cannot be guaranteed with this setup.
 
 ## Notion (designed for, untested)
 
-Same principles; not yet verified.
+Same principles; not yet verified. Notion's official connector is read/write.
 
-- Many investors run their pipeline as a Notion database of people or deals. **Ask the user which database holds their contacts before the first write** — never guess, and write nothing until they answer.
-- **Closest primitive**: a page (row) in that database representing the touchpoint, or a block appended to the contact's page — whichever matches how the user's database is organized (ask).
-- Put the key in the page title suffix. Dedupe scan = query the database for existing titles containing the key. Do not add properties to the user's database schema — that counts as editing their CRM structure.
+- Many investors run their pipeline as a Notion database of people or deals. **Ask the user which database holds their contacts** — never guess; it is searched for the contact match only.
+- **Scope (keeps the "notes and tasks only" promise honest)**: the ONLY write is a block appended to the matched contact's existing page — the note-equivalent. Never create pages or rows in the user's databases, and never add properties to their schema; both count as creating CRM objects, which this sync never does. If the user's setup has no per-contact page to append to, say so and skip Notion sync rather than inventing structure.
+- Put the key in the first line of the appended block. Dedupe scan = read the contact page's existing blocks and look for the key. Verify the first write by reading it back (as with any title-less primitive).
 
 ## Affinity (designed for, untested)
 
 Same principles; not yet verified.
 
-- No official Claude connector at the time of writing — applies only where the user has an Affinity MCP server connected.
+- Affinity has an official **read/write** Claude connector (verified 2026-08-21) that supports creating notes on records — making it a strong candidate for the next tested CRM, since it is the VC-native one.
 - **Closest primitive**: a note attached to a person. If the note primitive has no title field, use the first-line-of-body placement and read-back verification described under HubSpot.
 
 ## Say so in conversation
