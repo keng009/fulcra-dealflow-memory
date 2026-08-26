@@ -1,6 +1,6 @@
 # Fulcra Dealflow Memory
 
-Two Claude skills that turn your own [Fulcra](https://fulcra.ai) account into deal-flow relationship memory. Fulcra is a personal context platform: your account holds your data — calendars, health, location, files, custom records — and any AI assistant you connect to it over MCP reads and writes that same account. These skills use it as memory for your deal flow. Each touchpoint you log — a call, meeting, or exchange with a founder, fund partner, LP, or co-investor — is stored twice: a narrative entry you can read, and a typed record software can query. From there you get meeting prep ("prep me for Jane"), weekly review ("what moved this week"), a going-quiet list of relationships with no touchpoint in 45+ days, and an optional one-way copy into your CRM. Because the memory lives in your account rather than inside any one chat product, it persists across sessions and across assistants.
+Two Claude skills that give your deal flow a memory, on your own [Fulcra](https://fulcra.ai) account. Fulcra is a personal context platform: your account holds your data — calendars, files, custom records — and any AI assistant you connect to it over MCP reads and writes that same account. Each touchpoint you log — a founder conversation from first intro onward, a co-investor call, anyone in your network — is stored twice: a narrative entry you can read, and a typed record software can query. From there: sourcing recall ("what do I know about this company?"), prep before the partner meeting ("prep me for Jane"), momentum review ("what moved this week", grouped by company with stage changes per your notes), and a list of founders going quiet (45+ days). Optional one-way copy into your CRM. Because the memory lives in your account rather than inside any one chat product, it persists across sessions and across assistants.
 
 ## See it in 10 minutes — `dealflow-demo`
 
@@ -13,7 +13,7 @@ One guided session — about ten minutes once installed. The skill inspects your
 
 ## Make it your workflow — `dealflow-memory`
 
-The ongoing version: log conversations as they happen, prep before meetings, review the week, catch relationships going quiet.
+The ongoing version: log conversations as they happen, prep before meetings, review the week by company, catch founders going quiet.
 
 1. Same Fulcra account and connector as above.
 2. Download `dealflow-memory.zip` from the [latest release](https://github.com/keng009/fulcra-dealflow-memory/releases/latest) (or zip the `skills/dealflow-memory` folder — its `references/` subfolder must travel inside the zip) and upload it the same way.
@@ -29,7 +29,7 @@ Illustrative — the catalog lines reflect whatever your account actually holds,
 
 > **You:** run the Fulcra dealflow demo
 >
-> **Claude:** Fulcra is connected. Your account already holds sleep data, heart rate, two calendars, and location history — that's what this demo writes into: your account, not ours. Tell me about a recent conversation with a founder, LP, or co-investor. Who was it with, and what firm?
+> **Claude:** Fulcra is connected. Your account already holds two calendars, a file store, and several health and location streams — that's what this demo writes into: your account, not ours. Tell me about a recent conversation with a founder — or anyone in your deal flow. Who was it with, and what company?
 >
 > **You:** Call yesterday with Jane Doe, a GP at Acme Ventures. We talked through a possible seed co-invest and she offered to share their diligence checklist. I owe her our deck.
 >

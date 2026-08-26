@@ -30,7 +30,7 @@ Re-processing an identical batch against already-written notes produced **zero n
 
 ## Contract v2 delta (2026-08-21) — not yet separately live-tested
 
-The 2026-08-21 contract revision added the `dedupe_key` payload field, same-day ordinal keys, and per-destination reconciliation. The underlying mechanisms (JSON-in-note payloads, title scans) are identical to what passed above; the new fields and flows have **not yet** been re-run live. Next live pass should cover: a same-day second touchpoint (ordinal assignment), a simulated file-success/record-failure retry (self-healing fill), and an ambiguous CRM contact match (skip-and-say-so).
+The 2026-08-21 contract revision added the `dedupe_key` payload field, same-day ordinal keys, and per-destination reconciliation. Contract v2.1 (2026-08-26) renamed `firm` → `company` and added the optional `stage_noted` observation field (ADR-0004). The underlying mechanisms (JSON-in-note payloads, title scans) are identical to what passed above; the new fields and flows have **not yet** been re-run live. Next live pass should cover: a same-day second touchpoint (ordinal assignment), a simulated file-success/record-failure retry (self-healing fill), an ambiguous CRM contact match (skip-and-say-so), and a volunteered-stage capture surfacing in the report's stage-movement line.
 
 ## Untested surfaces (labeled accordingly in-product)
 

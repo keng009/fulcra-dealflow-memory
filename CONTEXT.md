@@ -29,14 +29,18 @@ How a touchpoint happened. Exactly one of: call, meeting, email, event, other.
 ### The people
 
 **Relationship**:
-The user's ongoing connection to one person — always person-level. Firm-level views ("what do I know about Acme Ventures") are always derived by aggregating that firm's people; there are no firm-level relationship files.
+The user's ongoing connection to one person — always person-level. Company-level views ("what do I know about Acme?") are always derived by aggregating that company's people; there are no company-level relationship files.
 _Avoid_: contact (that's the CRM's word), account
+
+**Company**:
+The company a person belongs to — a founder's startup or an investor's fund. The unit deal-flow reporting groups by.
+_Avoid_: firm
 
 **Relationship file**:
 The one narrative file per person under `/dealflow/relationships/<slug>.md`: who they are, open follow-ups, and their touchpoint entries.
 
 **Person slug**:
-The lowercase, hyphenated identifier derived from a person's name (`jane-doe`), disambiguated by firm only on collision.
+The lowercase, hyphenated identifier derived from a person's name (`jane-doe`), disambiguated by company only on collision.
 
 **Sample touchpoint**:
 The clearly-labeled fictional touchpoint (Jane Doe, Acme Ventures) the demo offers when the user has nothing real to log. Never presented as real data.
@@ -61,6 +65,10 @@ The full skill's three behaviors: log a touchpoint; brief the user on a person (
 **Going quiet**:
 The state of a relationship whose latest touchpoint is 45+ days old; surfaced by Report.
 _Avoid_: stale (in user-facing output; fine internally)
+
+**Stage noted**:
+An optional, as-of-that-conversation observation of where a deal stands, captured only when the user volunteers it. Narrative, never managed pipeline state — the user's CRM owns pipeline (ADR-0004).
+_Avoid_: stage (bare, implying managed state), pipeline stage
 
 **Source level**:
 How much automation the full skill detected: Level 1 (Fulcra only, conversational capture), Level 2 (+ calendar), Level 3 (+ transcript tool). Detected at bootstrap, never required.
