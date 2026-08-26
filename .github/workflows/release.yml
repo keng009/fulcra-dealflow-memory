@@ -1,0 +1,26 @@
+name: release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node scripts/validate.mjs
+      - name: Package skills (skill folder at zip root)
+        run: |
+          mkdir -p dist
+          (cd skills && zip -r ../dist/dealflow-demo.zip dealflow-demo)
+          (cd skills && zip -r ../dist/dealflow-memory.zip dealflow-memory)
+          unzip -l dist/dealflow-demo.zip | grep -q "dealflow-demo/SKILL.md"
+          unzip -l dist/dealflow-memory.zip | grep -q "dealflow-memory/references/conventions.md"
+      - name: Create release with assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/*.zip --generate-notes --title "$GITHUB_REF_NAME"

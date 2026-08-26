@@ -44,7 +44,7 @@ The clearly-labeled fictional touchpoint (Jane Doe, Acme Ventures) the demo offe
 ### The machinery
 
 **Dedupe key**:
-The deterministic identifier every touchpoint gets (`touch:<person-slug>:<YYYY-MM-DD>`, or the transcript id). Scanned for before every write, in every representation; finding it means skip. The mechanism behind "re-running can't duplicate data."
+The deterministic identifier every touchpoint gets (`touch:<person-slug>:<YYYY-MM-DD>`, ordinal-suffixed `-2`, `-3` for additional same-day touchpoints, or the transcript id). Each representation is scanned for it in its own store before writing; a match means confirm-with-the-user (same conversation → skip; different → next ordinal), never silent assumption. The mechanism behind "re-running can't duplicate data."
 
 **Provenance suffix**:
 The trailer every representation carries: producer | evidence | recorded-at. Marks stored conclusions as derived, never as source observations.

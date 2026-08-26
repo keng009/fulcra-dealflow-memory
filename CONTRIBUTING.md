@@ -20,7 +20,13 @@ Thanks for working on the dealflow packet. This file is the 60-second orientatio
 
 ## Testing a change
 
-There's no build. The test is running the thing:
+First, the automated gate — it enforces rules 1 and 3 mechanically, plus Claude's skill limits (name ≤64 chars, description ≤200 chars) and link integrity. CI runs it on every push and PR:
+
+```bash
+node scripts/validate.mjs
+```
+
+Then the real test is running the thing:
 
 1. Zip the skill folder you changed (`skills/dealflow-demo` or `skills/dealflow-memory` — the latter's `references/` must be inside the zip).
 2. Upload it as a custom skill in Claude, in an account with the Fulcra connector.
@@ -30,3 +36,11 @@ There's no build. The test is running the thing:
 ## Workflow
 
 PRs by convention, not enforcement: non-trivial changes (anything touching the contract, a skill's behavior, or a README claim) go through a PR so the other maintainer can sanity-check. Typo-grade fixes can push straight to `main`. Keep the internal spec/plan documents out of this repo — it ships product artifacts only.
+
+## Releasing
+
+Releases give investors ready-to-upload zips instead of clone-and-zip-yourself:
+
+1. `node scripts/validate.mjs` is green and any live-behavior change is recorded in [`docs/testing.md`](docs/testing.md) (dated, sanitized).
+2. Tag and push: `git tag v0.x.y && git push origin v0.x.y` — the release workflow validates, packages both skills with the folder at the zip root, and publishes the release with both zips attached.
+3. Sanity-check the two assets install in Claude before sharing the release link.

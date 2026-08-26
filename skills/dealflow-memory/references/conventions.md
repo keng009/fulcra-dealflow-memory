@@ -44,6 +44,7 @@ Rules:
 Exact formats:
 
 - Standard: `touch:<person-slug>:<YYYY-MM-DD>` — the date the touchpoint occurred.
+- Additional same-day touchpoints: append the next unused ordinal — `touch:<person-slug>:<YYYY-MM-DD>-2`, then `-3`, and so on. Two real conversations with the same person on the same day are two touchpoints, not a duplicate.
 - Source Level 3 (touchpoint logged from a meeting transcript): `touch:<transcript-id>` — the transcript's own id, so re-processing the same transcript cannot create a duplicate.
 
 Person slug rule: lowercase, hyphens, from person name (`jane-doe`); append firm slug only when two people collide (`jane-doe-acme`).
@@ -51,9 +52,14 @@ Person slug rule: lowercase, hyphens, from person name (`jane-doe`); append firm
 Where the key appears:
 
 - Relationship-file entry headings: `### 2026-08-20 — call [touch:jane-doe:2026-08-20]`
+- The typed record's payload `dedupe_key` field
 - CRM note title suffixes (when CRM sync is on): the note title ends with `[touch:jane-doe:2026-08-20]`
 
-The rule: **scan before every write** — the relationship file before a file write, and the contact's existing CRM note titles before a CRM write. If the key is already present, skip that write and tell the user it was already logged. Never assume a write happens exactly once.
+The rules:
+
+1. **Scan before every write, per destination.** Each representation is checked against its own store — the relationship file's text before a file write, the typed records (via `get_records`, matching payload `dedupe_key`) before a record write, the contact's existing CRM note titles before a CRM write. Write only the representations that are missing; this makes a partially completed earlier write self-healing on retry rather than half-skipped. When some representations existed and some were just filled in, say so.
+2. **A matched key means confirm, not assume.** When a capture's base key (or any of its ordinals) is already present, ask the user: same conversation → it is a duplicate, skip whatever already exists; a different conversation that day → use the next unused ordinal and log it as its own touchpoint.
+3. Never assume a write happens exactly once.
 
 ## Dealflow Touchpoint data type
 
@@ -62,12 +68,13 @@ The rule: **scan before every write** — the relationship file before a file wr
 - Creation: create-if-absent. Check `get_data_catalog` for an existing `Dealflow Touchpoint` type first; call `create_data_type` only if it is not there. Safe on re-runs.
 - Record payload: a MomentAnnotation record carries its structured payload as JSON in the record's note field. The payload fields:
 
-  `{"person","firm","channel":"call|meeting|email|event|other","summary","follow_ups":[],"producer","evidence","recorded_at"}`
+  `{"dedupe_key","person","firm","channel":"call|meeting|email|event|other","summary","follow_ups":[],"producer","evidence","recorded_at"}`
 
   A filled example:
 
   ```json
   {
+    "dedupe_key": "touch:jane-doe:2026-08-20",
     "person": "Jane Doe",
     "firm": "Acme Ventures",
     "channel": "call",
@@ -79,6 +86,7 @@ The rule: **scan before every write** — the relationship file before a file wr
   }
   ```
 
+- `dedupe_key` is the touchpoint's key (formats above) — it is what the per-destination record scan matches on.
 - `channel` is exactly one of: `call`, `meeting`, `email`, `event`, `other`.
 - `follow_ups` is an array of strings; an empty array when there are none.
 - `producer`, `evidence`, `recorded_at` are the provenance trio (see Provenance).
