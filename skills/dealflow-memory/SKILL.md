@@ -16,7 +16,7 @@ description: >-
 
 # dealflow-memory
 
-Ongoing deal-flow relationship memory on the user's own Fulcra account. Every conversation with a founder, fund partner, LP, or co-investor becomes two writes: a dated narrative entry in a per-person file under `/dealflow/relationships/`, and a structured `Dealflow Touchpoint` record. Recall ("prep me for X") and reporting ("what moved this week") read both back.
+Ongoing deal-flow memory on the user's own Fulcra account. Every logged conversation — founders first, plus co-investors and the rest of their network — becomes two writes: a dated narrative entry in a per-person file under `/dealflow/relationships/`, and a structured `Dealflow Touchpoint` record. Recall ("prep me for X") and reporting ("what moved this week") read both back.
 
 The formats embedded below are a working subset of `references/conventions.md`. That file is canonical — wherever this file and the reference differ, follow the reference.
 
