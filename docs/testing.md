@@ -56,9 +56,26 @@ Folder initialization (README/INDEX templates) was covered by the 2026-08-20 pas
 
 Zero writes performed — consistent with the snapshot's own rail. The commit/veto write mechanics reuse the API paths proven in the 2026-08-20 and 2026-08-26 passes (dual write, ordinals, self-healing, note creation, title scans); the new v3 pieces (review-queue file, CRM-origin keys, circularity guard) are prose rules over those same proven calls.
 
-## Contract v3 / snapshot-first flow (2026-08-27) — end-to-end NOT yet live-tested
+## 2026-08-27 — Snapshot → Commit → Veto, live end-to-end (Claude GCal + Otter + Attio read + official Fulcra connector)
 
-The snapshot-first flow (branch `flow/snapshot-first`) is built but unproven live: the 30-day snapshot sweep (weekly chunks, dual-surface calendar), the one-yes batch commit with review-queue parking, CRM-note-origin backfill keys with the circularity guard, sourcing checks, and tend deltas. Calendar reads themselves were verified 2026-08-27 (Claude Google Calendar connector: 90+ days of history, attendee emails intact; Fulcra-native calendar absent on the test account). This section gates the v0.3.0 release: run the snapshot → commit → veto loop against a real account and record results here first.
+Full flow run on the maintainer's real accounts against a fresh `/dealflow/` namespace. This was the v0.3.0 gate.
+
+| Step | Result |
+|---|---|
+| 30-day snapshot sweep, weekly chunks, dual-surface calendar (Fulcra-native absent → Claude GCal connector) | Pass — ~30 deal-flow candidate events surfaced from a real month |
+| Going-quiet ~60-day headline extension (new rule) | Pass — 3 extra weekly chunks; 9 quiet July threads surfaced that a 30-day window could not see |
+| Declined-events rule on real data | Pass both directions — one declined event with a transcript proving it happened was KEPT (sources beat RSVP); one declined event with no source was dropped |
+| Transcript enrichment (Level 3) | Pass — 7 of the kept touchpoints carried Otter summaries; keys minted as `touch:<transcript-id>` |
+| CRM read-only tracked-check | Pass — 8 sampled counterparts all present in Attio, every one auto-created by sync (no narrative anywhere), zero CRM writes |
+| Zero writes before consent | Pass — entire snapshot + enrichment performed no writes |
+| One collective yes, with a user exclusion | Pass — user approved the batch minus one named thread; that thread was excluded before any write (17 committed of 18 shown) |
+| Batch commit | Pass — folder files (README/INDEX/handoff incl. `## Vetoed keys`/review-queue), type create-if-absent, 17 relationship files + 17 typed records, mixed calendar-derived and transcript-derived keys |
+| Backfill hygiene | Pass — zero open follow-ups created; every `evidence` names its exact source (`calendar backfill <date>` / `otter transcript <id>`) |
+| Review-queue parking | Pass — 3 ambiguous items (attendee-less named meeting; two no-summary transcripts) parked with evidence, written nowhere else |
+| Read-back | Pass — all 17 payloads round-trip intact via `get_records`; no read lag observed |
+| Veto → tombstone | Pass — one committed touchpoint vetoed: relationship file soft-deleted, INDEX line removed, key added to `## Vetoed keys`; the typed record remains (no per-record delete) but the exclusion filter drops it from reads (16 of 17 surface) |
+
+Still untested from this flow: a commit re-run over the same window (idempotency of the event-start-time ordinal rule — no same-day pairs occurred in this month), and CRM-note-origin keys with the circularity guard (no CRM notes existed to import).
 
 ## Untested surfaces (labeled accordingly in-product)
 
