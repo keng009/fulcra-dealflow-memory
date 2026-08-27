@@ -49,6 +49,8 @@ const SHARED = [
   ["same-day ordinal", "-2", [demo, full]],
   ["stage-noted template line", "Stage noted:", [demo, full]],
   ["snapshot zero-writes sentence", "The snapshot performs zero writes.", [demo, full]],
+  ["dual-surface calendar detection", "any Claude-side calendar connector", [demo, full]],
+  ["declined-events rule", "sources beat RSVP status", [demo, full]],
 ];
 // contract v2.1: the old "firm" payload token must be gone from contract-bearing files
 for (const [i, t] of [contract, demo, full].entries()) {
@@ -72,6 +74,9 @@ const RAILS = [
   ["CRM-origin key form", "touch:attio-note:", [full, contract]],
   ["batch consent language", "one collective yes", [full, contract]],
   ["backfill hygiene rail", "Backfilled entries never create open follow-ups", [full, contract]],
+  ["circularity guard", "whose title already carries a", [full, contract]],
+  ["confidence tier (ambiguity parked)", "Never guessed", [full, contract]],
+  ["veto tombstone list", "## Vetoed keys", [full, contract]],
 ];
 for (const [label, needle, targets] of RAILS) {
   targets.forEach((t) => {

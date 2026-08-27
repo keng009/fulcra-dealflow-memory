@@ -84,7 +84,7 @@ _Avoid_: report (that's the stored-memory review), audit
 
 **Commit**:
 Converting a snapshot (or deeper backfill) into stored memory on one collective yes (ADR-0005). High-confidence drafts are written; ambiguity is parked, never guessed.
-_Avoid_: import, sync (both mean other things here)
+_Avoid_: sync (that's the CRM copy). "Import" is reserved for individual CRM-note-origin touchpoints, never the flow as a whole.
 
 **Backfill**:
 Committing touchpoints from past activity (calendar, transcripts, CRM notes) rather than logging them live. Activity-bounded, never CRM-bounded (ADR-0006); backfilled entries never create open follow-ups.
@@ -97,6 +97,9 @@ The "seen this company before?" lookup at intro time: direct hits, the user's ow
 
 **Tend**:
 The ongoing mode after commit: small deltas offered in one line, vetoes honored immediately, the review queue surfaced occasionally — seconds per day, never a project.
+
+**Veto**:
+The user striking a stored touchpoint ("that one's wrong"). The file entry is removed (versioned edit); because typed records have no per-record delete, the dedupe key goes on `handoff.md`'s `## Vetoed keys` list — the tombstone every read excludes and no commit re-imports.
 
 ### The packet
 

@@ -140,7 +140,7 @@ Run this before acting on any request. Keep the spoken output short — two or t
 
    - README.md — what this folder is and the rules for writing to it
    - INDEX.md — this file
-   - handoff.md — open follow-ups, pending intros, next actions
+   - handoff.md — open follow-ups, pending intros, next actions, vetoed keys
    ```
 
    `/dealflow/handoff.md`:
@@ -155,6 +155,9 @@ Run this before acting on any request. Keep the spoken output short — two or t
    (none yet)
 
    ## Next actions
+   (none yet)
+
+   ## Vetoed keys
    (none yet)
    ```
 
@@ -177,17 +180,17 @@ The snapshot is a read-only analysis of the user's recent deal flow, generated f
 1. **Sweep the window.** Default: the last 30 days of calendar (either surface, per bootstrap), read in weekly chunks — never one giant query. At Level 3, list transcripts in the window; with a CRM connected (read-only here), fetch recent notes/meetings by date.
 2. **Identify deal flow.** Keep events with external attendees; drop solo blocks, internal recurring meetings, and personal noise. Skip events the user declined — unless a transcript or CRM note shows the meeting actually happened (sources beat RSVP status). Named meetings with no attendee data are ambiguous, not evidence. Group by company using attendee email domains and names; identify the people the user actually spent time with.
 3. **Enrich per source.** Transcripts: one-line what-was-said per meeting, plus any volunteered stage language. CRM: mark which of these companies/people are tracked there and which have gone untracked ("in your Attio, no note since May" / "never entered your CRM at all").
-4. **Present** in five short parts: **Companies seen** (with meeting counts), **People you're spending time on**, **Going quiet** (threads that stopped — only when the window depth honestly supports it), **Loose ends** (meetings with no follow-up trace anywhere), and — only where sources allow — **Stage signals** (volunteered stages from transcripts, labeled "per your meetings"). Then say what connecting one more source would add (the progressive-connection ask), and offer the commit: "Want me to save this as your memory? One yes covers everything above; anything I wasn't sure about goes to a review queue instead."
+4. **Present** in five short parts: **Companies seen** (with meeting counts), **People you're spending time on**, **Going quiet** (threads that stopped — this check needs more depth than the display window: extend a headline-only sweep to ~60 days even when showing 30, or omit the section and say why), **Loose ends** (meetings with no follow-up trace anywhere), and — only where sources allow — **Stage signals** (volunteered stages from transcripts, labeled "per your meetings"). Then say what connecting one more source would add (the progressive-connection ask), and offer the commit: "Want me to save this as your memory? One yes covers everything above; anything I wasn't sure about goes to a review queue instead."
 5. If NO sources beyond Fulcra exist, don't fake a snapshot: say what a snapshot needs, and fall back to conversational capture.
 
 ## Commit (save the snapshot)
 
 Trigger: the user accepts the snapshot's offer ("yes, save it"), or asks to "backfill" a period directly.
 
-One collective yes covers the batch (ADR-0005): every HIGH-CONFIDENCE draft the user just saw is written; every ambiguous item goes to `/dealflow/review-queue.md` with its evidence and is written nowhere else until the user rules on it. Never guessed.
+One collective yes covers the batch (ADR-0005): every HIGH-CONFIDENCE draft the user just saw is written; every ambiguous item goes to `/dealflow/review-queue.md` with its evidence and is written nowhere else until the user rules on it. Never guessed. If the user prefers to go item by item instead, walk the drafts one at a time — per-item review is always available, never required.
 
 1. **Initialize** missing folder files from the Bootstrap templates (commit is an authorized write path, like Capture).
-2. **Write each high-confidence item** per the standard dual-write rules and per-destination dedupe scans. Keys by origin: calendar-derived → `touch:<person-slug>:<YYYY-MM-DD>` (ordinals for same-day); transcript-derived → `touch:<transcript-id>`; CRM-note-derived → `touch:<crm>-note:<note-id>` (e.g. `touch:attio-note:<note-id>`). Circularity guard: never import a CRM note whose title already carries a `[touch:` key — that is this system's own sync output.
+2. **Write each high-confidence item** per the standard dual-write rules and per-destination dedupe scans. Keys by origin: calendar-derived → `touch:<person-slug>:<YYYY-MM-DD>` (ordinals for same-day, assigned by event start-time order so re-running the same commit reproduces identical keys); transcript-derived → `touch:<transcript-id>`; CRM-note-derived → `touch:<crm>-note:<note-id>` (e.g. `touch:attio-note:<note-id>`). Circularity guard: never import a CRM note whose title already carries a `[touch:` key; that is this system's own sync output.
 3. **Backfill hygiene.** Backfilled entries never create open follow-ups; `evidence` names the source exactly (`calendar backfill`, `otter transcript <id>`, `attio note <id>`); `stage_noted` only when present in the source content.
 4. **Park the rest.** Ambiguous items → `review-queue.md`, appended with what was found and why it's uncertain. Tell the user how many are parked; never block on them.
 5. **Commit summary — mandatory.** List exactly what was written (files, records, keys) and what was parked. Remind them everything is reversible: files are versioned and soft-deletable, records archivable.
@@ -232,7 +235,7 @@ Trigger: "log my call with Jane", "log my meeting with the Acme founders", "I ju
 Trigger: "prep me for Jane", "what do I know about Acme Ventures", "when did I last talk to X", "prep me for tomorrow".
 
 1. Resolve the person to a slug and read `/dealflow/relationships/<slug>.md`. For a company-level question ("what do I know about Acme?"), check `INDEX.md` for everyone at that company and read each file — company views are always derived from the people.
-2. Call `get_records` for `Dealflow Touchpoint` over a wide window (the last 12 months is a sensible default), parse each record's note-field JSON, and keep the records whose `person` matches. This catches anything logged by another assistant against the same account.
+2. Call `get_records` for `Dealflow Touchpoint` over a wide window (the last 12 months is a sensible default), parse each record's note-field JSON, and keep the records whose `person` matches — skipping any whose `dedupe_key` is on the `## Vetoed keys` list in `handoff.md`. This catches anything logged by another assistant against the same account.
 3. At Level 2+, call `get_calendar_events` to find the next upcoming event with the person (name or email among attendees) — when it is, and who else is attending. For "prep me for tomorrow", start from tomorrow's calendar instead: pull the day's events, match attendees to relationship files, and produce a short brief per matched person.
 4. Output a brief, grounded only in what is stored:
    - **Who they are** — the Context line and company.
@@ -261,11 +264,11 @@ Sourcing checks are reads; they never write.
 Trigger: "what moved this week", "what moved this month", "deal-flow review", "who have I gone quiet on".
 
 1. **Window.** "This week" → the last 7 days; "this month" → the last 30 days; otherwise use the range the user names.
-2. **Activity, grouped by company.** `get_records` for `Dealflow Touchpoint` over the window; parse the note-field JSON payloads. Group by `company`: for each, the people talked to, touchpoint count, and channels.
+2. **Activity, grouped by company.** `get_records` for `Dealflow Touchpoint` over the window; parse the note-field JSON payloads, excluding any whose `dedupe_key` is on the `## Vetoed keys` list in `handoff.md`. Group by `company`: for each, the people talked to, touchpoint count, and channels.
 3. **Companies seen vs. active.** A company is *seen* (new) if its earliest touchpoint falls inside the window — check the bottom of its people's relationship files (including keys listed in the `### Earlier` digest) rather than assuming the window's records are the whole history; otherwise it is *active* (ongoing this window).
 3b. **Stage movement (per your notes).** Where touchpoints in or before the window carry `stage_noted`, surface the latest observation per company — and when the window contains a *change* between observations, call it out: "Acme: evaluating → term-sheet, per your notes." Always attach that label: these are conversation observations, not CRM truth, and stages noted longer ago may be stale.
 4. **Open follow-ups (read-only).** Unchecked items from `/dealflow/handoff.md`, oldest first — plus any unchecked `- [ ]` items found under `## Open follow-ups` in the relationship files read in the next step that are missing from `handoff.md` (the demo skill writes follow-ups only to relationship files). Include those in the report and note the discrepancy, but do NOT write anything: a report never mutates state. Offer once — "say 'sync follow-ups' and I'll add the missing ones to handoff.md" — and only that explicit confirmation triggers the write.
-5. **Stale alert (45+ days).** `list_files` on `/dealflow/relationships/`, read each file, and take the date from the first `###` heading under `## Touchpoints` (entries are newest first, so the first heading is the latest touchpoint). Anyone whose latest touchpoint is 45 or more days old goes on a "going quiet" list with days-since-contact, sorted most-stale first. Skip files with no touchpoints yet, and say so if any exist.
+5. **Stale alert (45+ days).** Never read every relationship file for this (ADR-0006): one wider `get_records` call (say the last 180 days) gives the latest touchpoint date per person; going quiet = everyone in `INDEX.md`'s relationship entries whose latest record is 45 or more days old — or absent from the window entirely ("180+ days"). List them with days-since-contact, sorted most-stale first. Read a relationship file only for someone already flagged, when the user wants the detail.
 6. Output four short sections: **Companies seen** (new this window, with any stage noted), **Active** (ongoing, with stage movement per your notes), **Open follow-ups**, **Founders going quiet (45+ days)**. Keep it scannable — a partner should get the picture in fifteen seconds. If the window contains no touchpoints, say exactly that; do not scrape other data to fill space.
 
 ## Tend
@@ -273,7 +276,7 @@ Trigger: "what moved this week", "what moved this month", "deal-flow review", "w
 After a commit exists, ongoing upkeep arrives as small deltas, never projects:
 
 1. **Deltas.** When a session detects new activity since the last touchpoint (a fresh transcript, new calendar meetings, new CRM notes), offer the increment in one line: "2 new touchpoints from today's calls — want them logged?" On yes, write per the standard rules; the whole exchange is seconds.
-2. **Vetoes.** "That one's wrong / remove it" → remove the entry from the relationship file (versioned edit), note the record as superseded in the file, and clear any queue entry. Say exactly what was removed.
+2. **Vetoes.** "That one's wrong / remove it" → remove the entry from the relationship file (versioned edit), add its dedupe key to the `## Vetoed keys` list in `handoff.md` — typed records have no per-record delete, so this list is the tombstone every read honors: Recall, Report, and Sourcing checks exclude payloads whose `dedupe_key` appears on it, and no commit re-imports one — and clear any queue entry. Say exactly what was removed.
 3. **The queue, occasionally.** When the user seems to have a spare moment (never mid-task), surface the review queue count once: "3 items parked for your judgment whenever you want them." Process rulings immediately; each ruling either writes the item properly or drops it.
 4. **Staleness at scale.** Computing "going quiet" never requires reading every relationship file: one windowed `get_records` call gives the active set; going-quiet = INDEX entries minus that set (ADR-0006 access rules).
 

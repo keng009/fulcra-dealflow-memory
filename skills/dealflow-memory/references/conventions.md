@@ -13,7 +13,7 @@ The shared data contract for the `dealflow-demo` and `dealflow-memory` skills: w
 | `/dealflow/README.md` | What this folder is, which skills write to it, a pointer to these conventions, and the no-credentials rule: no credentials, tokens, or secrets are ever written to any file in this folder. |
 | `/dealflow/INDEX.md` | One line per file in the folder. Read at bootstrap; updated whenever a file is added. |
 | `/dealflow/relationships/<slug>.md` | One narrative file per person (founder, fund partner, LP, co-investor). Dated touchpoint entries, newest first. |
-| `/dealflow/handoff.md` | Durable handoff: open follow-ups, pending intros, next actions. |
+| `/dealflow/handoff.md` | Durable handoff: open follow-ups, pending intros, next actions — plus the `## Vetoed keys` list (dedupe keys the user has vetoed; every read excludes them, and no commit re-imports them; needed because typed records have no per-record delete). |
 | `/dealflow/review-queue.md` | Ambiguous items from commits/backfill parked for the user's judgment, each with its evidence. Skills append; the user (or the user via any assistant) clears. Never written to any other store while queued. |
 
 ## Relationship file format
@@ -47,7 +47,7 @@ Rules:
 Exact formats:
 
 - Standard: `touch:<person-slug>:<YYYY-MM-DD>` — the date the touchpoint occurred.
-- Additional same-day touchpoints: append the next unused ordinal — `touch:<person-slug>:<YYYY-MM-DD>-2`, then `-3`, and so on. Two real conversations with the same person on the same day are two touchpoints, not a duplicate.
+- Additional same-day touchpoints: append the next unused ordinal — `touch:<person-slug>:<YYYY-MM-DD>-2`, then `-3`, and so on. Two real conversations with the same person on the same day are two touchpoints, not a duplicate. When touchpoints derive from calendar events (commit/backfill), ordinals are assigned by event start-time order — so re-running the same commit reproduces identical keys and stays idempotent.
 - Source Level 3 (touchpoint logged from a meeting transcript): `touch:<transcript-id>` — the transcript's own id, so re-processing the same transcript cannot create a duplicate.
 - CRM-origin (touchpoint imported from an existing CRM note during commit/backfill): `touch:<crm>-note:<note-id>` — e.g. `touch:attio-note:2f6b2a2a…` — the note's stable id in that CRM. Circularity guard: never import a CRM note whose title already carries a `[touch:` key; that is this system's own sync output.
 
@@ -104,7 +104,8 @@ The rules:
 The snapshot is an on-the-fly analysis of the user's recent deal flow (default: the last 30 days), generated from whatever sources are connected and shown BEFORE anything is stored. The snapshot performs zero writes. Rules:
 
 - Calendar is read from EITHER surface, detected by capability: Fulcra's `get_calendar_events`, or any Claude-side calendar connector. Sweep the window in weekly chunks (payload rule).
-- Group findings by company (attendee email domains + names); filter personal noise (events with no external attendees). Skip events the user declined — unless another source (a transcript, a CRM note) shows the meeting actually happened; sources beat RSVP status. Named meetings with no attendee data are ambiguous, not evidence.
+- Group findings by company (attendee email domains + names); filter noise: solo blocks, internal recurring meetings, and events with no external attendees. Skip events the user declined — unless another source (a transcript, a CRM note) shows the meeting actually happened; sources beat RSVP status. Named meetings with no attendee data are ambiguous, not evidence.
+- Going-quiet needs depth the display window lacks: when showing a 30-day snapshot, extend a headline-only sweep to ~60 days for the going-quiet check, or omit the section and say why.
 - Transcript and CRM sources, where connected, enrich with what-was-said and tracked-vs-untracked gaps — reads only.
 - Degrade honestly: with fewer sources, say what is missing and what connecting it would add.
 
