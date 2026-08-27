@@ -46,7 +46,17 @@ Folder initialization (README/INDEX templates) was covered by the 2026-08-20 pas
 
 **Still untested**: an ambiguous CRM contact match (skip-and-say-so), and the demo skill run through Claude's actual zip-upload UI end-to-end — the latter is a human step (upload, say "run the Fulcra dealflow demo", complete a session) and should be done once before any investor walkthrough.
 
-## Contract v3 / snapshot-first flow (2026-08-27) — NOT yet live-tested
+## 2026-08-27 — Snapshot READ side, live against a real month (Claude Google Calendar connector)
+
+| Test | Result |
+|---|---|
+| Weekly-chunk sweep of a real calendar week (18 events) | Pass — attendee emails, organizers, RSVP status all present |
+| Deal-flow identification on real data | Pass — external meetings correctly separable from travel blocks, holds, solo tasks, personal events |
+| Findings folded back into the contract | Declined-events rule added (skip unless a transcript/CRM note shows the meeting happened — sources beat RSVP); attendee-less named meetings confirmed as ambiguous-tier, not evidence |
+
+Zero writes performed — consistent with the snapshot's own rail. The commit/veto write mechanics reuse the API paths proven in the 2026-08-20 and 2026-08-26 passes (dual write, ordinals, self-healing, note creation, title scans); the new v3 pieces (review-queue file, CRM-origin keys, circularity guard) are prose rules over those same proven calls.
+
+## Contract v3 / snapshot-first flow (2026-08-27) — end-to-end NOT yet live-tested
 
 The snapshot-first flow (branch `flow/snapshot-first`) is built but unproven live: the 30-day snapshot sweep (weekly chunks, dual-surface calendar), the one-yes batch commit with review-queue parking, CRM-note-origin backfill keys with the circularity guard, sourcing checks, and tend deltas. Calendar reads themselves were verified 2026-08-27 (Claude Google Calendar connector: 90+ days of history, attendee emails intact; Fulcra-native calendar absent on the test account). This section gates the v0.3.0 release: run the snapshot → commit → veto loop against a real account and record results here first.
 

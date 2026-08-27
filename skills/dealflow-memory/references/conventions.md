@@ -104,7 +104,7 @@ The rules:
 The snapshot is an on-the-fly analysis of the user's recent deal flow (default: the last 30 days), generated from whatever sources are connected and shown BEFORE anything is stored. The snapshot performs zero writes. Rules:
 
 - Calendar is read from EITHER surface, detected by capability: Fulcra's `get_calendar_events`, or any Claude-side calendar connector. Sweep the window in weekly chunks (payload rule).
-- Group findings by company (attendee email domains + names); filter personal noise (events with no external attendees).
+- Group findings by company (attendee email domains + names); filter personal noise (events with no external attendees). Skip events the user declined — unless another source (a transcript, a CRM note) shows the meeting actually happened; sources beat RSVP status. Named meetings with no attendee data are ambiguous, not evidence.
 - Transcript and CRM sources, where connected, enrich with what-was-said and tracked-vs-untracked gaps — reads only.
 - Degrade honestly: with fewer sources, say what is missing and what connecting it would add.
 

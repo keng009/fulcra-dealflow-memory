@@ -56,7 +56,7 @@ Detect sources first: calendar on either surface (Fulcra `get_calendar_events`, 
 Generate a read-only mini-snapshot of their last 30 days. The snapshot performs zero writes.
 
 1. Sweep the calendar window in weekly chunks (never one giant query); with a transcript tool, list the window's transcripts too.
-2. Keep meetings with external attendees; group by company via attendee email domains and names; drop solo blocks and personal noise.
+2. Keep meetings with external attendees; group by company via attendee email domains and names; drop solo blocks, declined events (unless a transcript shows the meeting happened), and personal noise.
 3. Present it compactly: **Companies seen** (with counts), **People you're spending time on**, and — transcripts permitting — a couple of one-line what-was-said highlights. A few sentences of framing, not a report: this was generated from their own month, before anything was stored.
 4. Offer the save: "Want me to keep this as your memory? One yes saves the clear matches — everything is versioned and reversible; anything I'm unsure about stays out (the full skill keeps a review queue for those)." On yes: write the clearly-matched touchpoints using the formats below — creating the folder files and the data type first as needed, backfill entries carrying `evidence` like `calendar backfill` and creating no open follow-ups — then go to the payoff using the most interesting saved person.
 5. On no, or if the snapshot looks thin: fall through to Path B with one touchpoint of their choosing — the demo still works.
