@@ -63,8 +63,9 @@ Where the key appears:
 The rules:
 
 1. **Scan before every write, per destination.** Each representation is checked against its own store — the relationship file's text before a file write, the typed records (via `get_records`, matching payload `dedupe_key`) before a record write, the contact's existing CRM note titles before a CRM write. Write only the representations that are missing; this makes a partially completed earlier write self-healing on retry rather than half-skipped. When some representations existed and some were just filled in, say so.
-2. **A matched key means confirm, not assume.** When a capture's base key (or any of its ordinals) is already present, ask the user: same conversation → it is a duplicate, skip whatever already exists; a different conversation that day → use the next unused ordinal and log it as its own touchpoint.
+2. **A matched key means confirm, not assume.** When a capture's base key (or any of its ordinals) is already present in ANY representation, ask the user: same conversation → it is a duplicate, keep the stored key and write only the representations the scan showed missing (self-healing); a different conversation that day → use the next unused ordinal and log it as its own touchpoint.
 3. Never assume a write happens exactly once.
+4. **Load the veto set first.** Before any read of stored records or any commit write, read `## Vetoed keys` from `/dealflow/handoff.md`. A vetoed key never surfaces in any output (recall, report, sourcing, snapshot enrichment) and is never re-imported by any commit — including the self-healing path: a missing representation of a vetoed touchpoint is never recreated. This is the single veto invariant; every per-behavior mention is a reminder of this rule, not a separate rule.
 
 ## Dealflow Touchpoint data type
 

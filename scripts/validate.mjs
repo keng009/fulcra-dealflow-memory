@@ -78,6 +78,8 @@ const RAILS = [
   ["circularity guard", "whose title already carries a", [full, contract]],
   ["confidence tier (ambiguity parked)", "Never guessed", [full, contract]],
   ["veto tombstone list", "## Vetoed keys", [full, contract]],
+  ["veto-set-first invariant", "Load the veto set first", [full, contract]],
+  ["any-match-confirms rule", "already present in ANY representation", [full, contract]],
 ];
 for (const [label, needle, targets] of RAILS) {
   targets.forEach((t) => {

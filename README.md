@@ -4,7 +4,7 @@ Two Claude skills that give your deal flow a memory, on your own [Fulcra](https:
 
 ## See it in 10 minutes — `dealflow-demo`
 
-One guided session — about ten minutes once installed. The skill inspects your Fulcra data catalog, builds a **read-only snapshot of your last 30 days of deal flow** from whatever you've connected (calendar, meeting tools), saves it as memory on a single yes — files versioned, any saved item strikeable later via a veto list — and generates a prep brief from what it just stored. Nothing is written until you say so; with no sources connected, it falls back to capturing one touchpoint conversationally. Think of it as the hello-world; `dealflow-memory` below is the product.
+One guided session — about ten minutes once installed. The skill inspects your Fulcra data catalog, builds a **read-only snapshot of your last 30 days of deal flow** from whatever you've connected (calendar, meeting tools), saves it as memory on a single yes — files versioned; the full skill adds a veto flow that can strike any saved item later — and generates a prep brief from what it just stored. Nothing is written until you say so; with no sources connected, it falls back to capturing one touchpoint conversationally. Think of it as the hello-world; `dealflow-memory` below is the product.
 
 1. Create a Fulcra account at [fulcra.ai](https://fulcra.ai) if you don't have one. An empty account is fine — the demo works without prior data.
 2. In Claude, open **Customize → Connectors** and connect **Fulcra**.
@@ -29,7 +29,7 @@ Illustrative — the companies and counts reflect your actual month; with no sou
 
 > **You:** run the Fulcra dealflow demo
 >
-> **Claude:** Fulcra is connected, and I can see your calendar. One minute while I read your last 30 days… Here's your snapshot — **nothing is saved yet**: **Companies seen** — Acme Ventures (3 meetings), Northstar Robotics (2), Bluefin Bio (1). **People you're spending time on** — Jane Doe (Acme) and the Northstar founders. **Loose ends** — two meetings with no follow-up note anywhere. Want me to keep this as your memory? One yes saves the clear matches; anything I'm unsure about goes to a review queue, and anything saved can be struck later.
+> **Claude:** Fulcra is connected, and I can see your calendar. One minute while I read your last 30 days… Here's your snapshot — **nothing is saved yet**: **Companies seen** — Acme Ventures (3 meetings), Northstar Robotics (2), Bluefin Bio (1). **People you're spending time on** — Jane Doe (Acme) and the Northstar founders. **Loose ends** — two meetings with no follow-up note anywhere. Want me to keep this as your memory? One yes saves the clear matches; anything I'm unsure about goes to a review queue, and the full skill can strike any saved item later.
 >
 > **You:** Yes.
 >
