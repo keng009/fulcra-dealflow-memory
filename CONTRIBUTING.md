@@ -35,7 +35,7 @@ Then the real test is running the thing:
 
 ## Workflow
 
-PRs by convention, not enforcement: non-trivial changes (anything touching the contract, a skill's behavior, or a README claim) go through a PR so the other maintainer can sanity-check. Typo-grade fixes can push straight to `main`. Keep the internal spec/plan documents out of this repo — it ships product artifacts only.
+`main` is protected: changes land via PR with the `validate` check green (no approval count required — the PR is the sanity-check surface, not a gate), force-pushes and deletions are blocked. The repo admin can still push typo-grade fixes directly; everyone else PRs everything. Non-trivial changes (anything touching the contract, a skill's behavior, or a README claim) deserve a moment of the other maintainers' eyes on the PR regardless. Keep the internal spec/plan documents out of this repo — it ships product artifacts only.
 
 ## Releasing
 
