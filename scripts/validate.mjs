@@ -48,6 +48,7 @@ const SHARED = [
   ["slug rule", "lowercase, hyphens, from person name (`jane-doe`); append company slug only when two people collide (`jane-doe-acme`)", [demo, full]],
   ["same-day ordinal", "-2", [demo, full]],
   ["stage-noted template line", "Stage noted:", [demo, full]],
+  ["snapshot zero-writes sentence", "The snapshot performs zero writes.", [demo, full]],
 ];
 // contract v2.1: the old "firm" payload token must be gone from contract-bearing files
 for (const [i, t] of [contract, demo, full].entries()) {
@@ -67,6 +68,10 @@ const RAILS = [
   ["no-credentials rail", "credentials, tokens, or secrets", [demo, full]],
   ["never-create-contacts rail", "Never create CRM contacts", [full]],
   ["reads-never-write rail", "Reads never write", [full]],
+  ["review queue convention", "review-queue.md", [full, contract]],
+  ["CRM-origin key form", "touch:attio-note:", [full, contract]],
+  ["batch consent language", "one collective yes", [full, contract]],
+  ["backfill hygiene rail", "Backfilled entries never create open follow-ups", [full, contract]],
 ];
 for (const [label, needle, targets] of RAILS) {
   targets.forEach((t) => {

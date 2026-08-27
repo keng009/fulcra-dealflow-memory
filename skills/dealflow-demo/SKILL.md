@@ -2,8 +2,8 @@
 name: dealflow-demo
 description: >-
   Use when the user asks to run the Fulcra dealflow demo or wants a guided
-  10-minute tour of Fulcra as deal-flow memory: capture one real touchpoint,
-  store it, and get a prep brief built from it.
+  10-minute tour of Fulcra as deal-flow memory: see a snapshot of their
+  recent deal flow, save it in one yes, get a prep brief.
 ---
 
 <!-- Trigger phrases: "run the Fulcra dealflow demo", "dealflow demo", "show me the
@@ -47,9 +47,23 @@ Call `get_data_catalog`. Reflect back three to five things the account already h
 
 If the catalog is sparse (a brand-new account), say so plainly and keep going — the demo works fine on an empty account.
 
-## 3. Capture one real touchpoint
+## 3. Show their deal flow
 
-### Ask
+Detect sources first: calendar on either surface (Fulcra `get_calendar_events`, or any Claude-side calendar connector), and any transcript tool. Sources present → Path A. None → Path B.
+
+### Path A — Snapshot first (sources detected)
+
+Generate a read-only mini-snapshot of their last 30 days. The snapshot performs zero writes.
+
+1. Sweep the calendar window in weekly chunks (never one giant query); with a transcript tool, list the window's transcripts too.
+2. Keep meetings with external attendees; group by company via attendee email domains and names; drop solo blocks and personal noise.
+3. Present it compactly: **Companies seen** (with counts), **People you're spending time on**, and — transcripts permitting — a couple of one-line what-was-said highlights. A few sentences of framing, not a report: this was generated from their own month, before anything was stored.
+4. Offer the save: "Want me to keep this as your memory? One yes saves the clear matches — everything is versioned and reversible; anything I'm unsure about stays out (the full skill keeps a review queue for those)." On yes: write the clearly-matched touchpoints using the formats below — creating the folder files and the data type first as needed, backfill entries carrying `evidence` like `calendar backfill` and creating no open follow-ups — then go to the payoff using the most interesting saved person.
+5. On no, or if the snapshot looks thin: fall through to Path B with one touchpoint of their choosing — the demo still works.
+
+### Path B — Conversational capture (no sources, or by choice)
+
+Ask
 
 Ask about a recent conversation with a founder — or, failing that, a co-investor or anyone else in their deal-flow network. At most five questions, and if they answer several at once — or paste notes — extract what you need and don't re-ask:
 
@@ -166,7 +180,7 @@ One line of narration for the pair of writes: the same fact now exists twice —
 
 ## 4. The payoff
 
-Generate a prep brief for that person **from the stored data, not from this conversation**: `read_file` the relationship file back, and `get_records` for Dealflow Touchpoint to check the record round-trips (mention the check in half a sentence). Fulcra reads can briefly lag writes: if a read-back comes back empty or stale, say so in half a sentence, retry once, and if it still lags, build the brief from the content you just successfully wrote — a lagging read is not a failed write, and this step never declares failure over one. Then produce, under 150 words:
+Generate a prep brief — for the person captured in Path B, or the most interesting person saved from Path A's snapshot — **from the stored data, not from this conversation**: `read_file` the relationship file back, and `get_records` for Dealflow Touchpoint to check the record round-trips (mention the check in half a sentence). Fulcra reads can briefly lag writes: if a read-back comes back empty or stale, say so in half a sentence, retry once, and if it still lags, build the brief from the content you just successfully wrote — a lagging read is not a failed write, and this step never declares failure over one. Then produce, under 150 words:
 
 **Prep brief — [Person] ([Company])**
 - Who they are (the Context line)

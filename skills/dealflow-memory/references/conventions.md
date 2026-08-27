@@ -14,6 +14,7 @@ The shared data contract for the `dealflow-demo` and `dealflow-memory` skills: w
 | `/dealflow/INDEX.md` | One line per file in the folder. Read at bootstrap; updated whenever a file is added. |
 | `/dealflow/relationships/<slug>.md` | One narrative file per person (founder, fund partner, LP, co-investor). Dated touchpoint entries, newest first. |
 | `/dealflow/handoff.md` | Durable handoff: open follow-ups, pending intros, next actions. |
+| `/dealflow/review-queue.md` | Ambiguous items from commits/backfill parked for the user's judgment, each with its evidence. Skills append; the user (or the user via any assistant) clears. Never written to any other store while queued. |
 
 ## Relationship file format
 
@@ -48,6 +49,7 @@ Exact formats:
 - Standard: `touch:<person-slug>:<YYYY-MM-DD>` — the date the touchpoint occurred.
 - Additional same-day touchpoints: append the next unused ordinal — `touch:<person-slug>:<YYYY-MM-DD>-2`, then `-3`, and so on. Two real conversations with the same person on the same day are two touchpoints, not a duplicate.
 - Source Level 3 (touchpoint logged from a meeting transcript): `touch:<transcript-id>` — the transcript's own id, so re-processing the same transcript cannot create a duplicate.
+- CRM-origin (touchpoint imported from an existing CRM note during commit/backfill): `touch:<crm>-note:<note-id>` — e.g. `touch:attio-note:2f6b2a2a…` — the note's stable id in that CRM. Circularity guard: never import a CRM note whose title already carries a `[touch:` key; that is this system's own sync output.
 
 Person slug rule: lowercase, hyphens, from person name (`jane-doe`); append company slug only when two people collide (`jane-doe-acme`).
 
@@ -96,6 +98,24 @@ The rules:
 - `follow_ups` is an array of strings; an empty array when there are none.
 - `producer`, `evidence`, `recorded_at` are the provenance trio (see Provenance).
 - The record's timestamp is when the touchpoint occurred — not when it was logged. (`recorded_at` in the payload is when it was logged; the two differ whenever a touchpoint is logged after the fact.)
+
+## Snapshot (read-only analysis)
+
+The snapshot is an on-the-fly analysis of the user's recent deal flow (default: the last 30 days), generated from whatever sources are connected and shown BEFORE anything is stored. The snapshot performs zero writes. Rules:
+
+- Calendar is read from EITHER surface, detected by capability: Fulcra's `get_calendar_events`, or any Claude-side calendar connector. Sweep the window in weekly chunks (payload rule).
+- Group findings by company (attendee email domains + names); filter personal noise (events with no external attendees).
+- Transcript and CRM sources, where connected, enrich with what-was-said and tracked-vs-untracked gaps — reads only.
+- Degrade honestly: with fewer sources, say what is missing and what connecting it would add.
+
+## Commit, confidence, and backfill hygiene
+
+A snapshot (or deeper backfill) becomes stored memory only on the user's explicit consent — one collective yes covers the batch (ADR-0005): every item just shown as a draft is written per the dual-write rules, and a commit summary listing everything written is mandatory output. Confidence gates what the yes covers:
+
+- **High confidence** — unambiguous person/company match with real content → written on the batch yes.
+- **Ambiguous** — multiple candidates, no candidate, or unclear relevance → appended to `review-queue.md` with its evidence, and written nowhere else until the user rules on it. Never guessed.
+
+Backfill hygiene (applies to anything imported rather than logged live): Backfilled entries never create open follow-ups; `evidence` names the source exactly (`calendar backfill`, `otter transcript <id>`, `attio note <id>`); `stage_noted` only when present in the source content. Depth is activity-bounded: default 30 days; deeper (90 days where transcripts/CRM notes exist, 45–60 calendar-only) only on request; hard stop ~180 days.
 
 ## Provenance
 
