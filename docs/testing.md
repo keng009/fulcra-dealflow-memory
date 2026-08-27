@@ -85,7 +85,18 @@ External review flagged that ordinal-by-event-order calendar keys are not stable
 | Vetoed key on commit re-run | Pass — the vetoed item was excluded from re-import by the `## Vetoed keys` list (read live from handoff.md) |
 | Veto → Sourcing check | Pass — after the read-path fix (Sourcing now loads the vetoed-keys filter), a sourcing check on the vetoed thread returns "no history": no INDEX hit, record present but excluded |
 
-Still untested from this flow: a first-and-second commit under the new `touch:cal:<event-id>` key form itself — the re-run above only proved the cross-scan against date-form data; it did not prove the connected calendar exposes stable event ids or that the new-key write path is duplicate-free across two runs; CRM-note-origin keys with the circularity guard (no CRM notes existed to import); the demo's per-destination record scan (added post-review; the equivalent full-skill path was live-tested 2026-08-26); injected record-only/file-only partial failures under the v3 flow (the v2.1 self-healing fill test covered the record-missing case); and the release-ZIP upload journey end to end (human step, required before any investor walkthrough).
+**2026-08-27, later: the `touch:cal:<event-id>` write path live test (#34)** — run on one real, previously unstored calendar touchpoint with the user's explicit consent (ADR-0005):
+
+| Test | Result |
+|---|---|
+| Connected calendar exposes a stable event id | Pass — the same event fetched twice, ~1 hour apart, returned a byte-identical id |
+| Veto-set-first + dual-store pre-write scan (both key forms) | Pass — veto list loaded (no match), file and record stores both clean for the event id and the person's date-form family |
+| First commit under `touch:cal:<event-id>` | Pass — file heading carries the key; payload round-trips intact via `get_records`; no read lag |
+| Second commit of the same event | Pass — the fresh dual-store scan matched the `touch:cal:` key itself (not the cross-scan) in both representations → skip; **zero writes** |
+
+(A transient connector 401 interrupted the first attempt mid-scan, before any write — after reconnecting, state was verified unchanged and the run completed. The lag-guard posture held: no failure was declared on a recoverable read.)
+
+Still untested from this flow: CRM-note-origin keys with the circularity guard (no CRM notes existed to import); the demo's per-destination record scan (added post-review; the equivalent full-skill path was live-tested 2026-08-26); injected record-only/file-only partial failures under the v3 flow (the v2.1 self-healing fill test covered the record-missing case); and the release-ZIP upload journey end to end (human step, required before any investor walkthrough).
 
 ## Untested surfaces (labeled accordingly in-product)
 
