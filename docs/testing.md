@@ -96,7 +96,25 @@ External review flagged that ordinal-by-event-order calendar keys are not stable
 
 (A transient connector 401 interrupted the first attempt mid-scan, before any write — after reconnecting, state was verified unchanged and the run completed. The lag-guard posture held: no failure was declared on a recoverable read.)
 
-Still untested from this flow: CRM-note-origin keys with the circularity guard (no CRM notes existed to import); the demo's per-destination record scan (added post-review; the equivalent full-skill path was live-tested 2026-08-26); injected record-only/file-only partial failures under the v3 flow (the v2.1 self-healing fill test covered the record-missing case); and the release-ZIP upload journey end to end (human step, required before any investor walkthrough).
+**2026-08-27, later still — CRM-note-origin import + circularity guard (#29), live against Attio:**
+
+| Test | Result |
+|---|---|
+| Import a pre-existing CRM note (no key in title) | Pass — dual write keyed `touch:attio-note:<note-id>`, payload round-trips; entry inserted newest-first into an existing relationship file |
+| Import re-run | Pass — note's key found in the record store, zero imports |
+| Sync write per the crm-sync note format (title ends with the touchpoint key) | Pass — created after a title-scan dedupe |
+| Circularity guard on the next import sweep | Pass — the sync-written note (title carries `[touch:`) was refused as this system's own output; zero imports overall |
+
+**2026-08-27, later still — injected partial failures under v3 (#30):**
+
+| Test | Result |
+|---|---|
+| File-only half-write (record deliberately skipped) → retry | Pass — per-destination scan found file-yes/record-no; heal wrote ONLY the record; window read-back shows exactly one record, file untouched |
+| Record-only half-write (file deliberately skipped) → retry | Pass — scan found record-yes/file-no; heal wrote ONLY the file (+ INDEX line); no second record |
+
+(The demo's per-destination scan follows the same mechanics exercised here; running it inside Claude's actual skill UI remains part of the #31 journey.)
+
+Still untested from this flow: the release-ZIP upload journey end to end (#31 — human step, required before any investor walkthrough).
 
 ## Untested surfaces (labeled accordingly in-product)
 
