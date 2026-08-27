@@ -46,6 +46,10 @@ Folder initialization (README/INDEX templates) was covered by the 2026-08-20 pas
 
 **Still untested**: an ambiguous CRM contact match (skip-and-say-so), and the demo skill run through Claude's actual zip-upload UI end-to-end — the latter is a human step (upload, say "run the Fulcra dealflow demo", complete a session) and should be done once before any investor walkthrough.
 
+## Contract v3 / snapshot-first flow (2026-08-27) — NOT yet live-tested
+
+The snapshot-first flow (branch `flow/snapshot-first`) is built but unproven live: the 30-day snapshot sweep (weekly chunks, dual-surface calendar), the one-yes batch commit with review-queue parking, CRM-note-origin backfill keys with the circularity guard, sourcing checks, and tend deltas. Calendar reads themselves were verified 2026-08-27 (Claude Google Calendar connector: 90+ days of history, attendee emails intact; Fulcra-native calendar absent on the test account). This section gates the v0.3.0 release: run the snapshot → commit → veto loop against a real account and record results here first.
+
 ## Untested surfaces (labeled accordingly in-product)
 
 HubSpot (official connector is read-only — sync requires a write-capable MCP server, untested), Notion (official connector read/write, block-append scope untested), Affinity (official connector read/write, untested). See issues #4 and #5.

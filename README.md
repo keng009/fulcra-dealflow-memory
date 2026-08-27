@@ -4,7 +4,7 @@ Two Claude skills that give your deal flow a memory, on your own [Fulcra](https:
 
 ## See it in 10 minutes — `dealflow-demo`
 
-One guided session — about ten minutes once installed. The skill inspects your Fulcra data catalog, captures one real touchpoint from your world, writes it into your account in both forms, and generates a prep brief from what it just stored. Think of it as the hello-world; `dealflow-memory` below is the product.
+One guided session — about ten minutes once installed. The skill inspects your Fulcra data catalog, builds a **read-only snapshot of your last 30 days of deal flow** from whatever you've connected (calendar, meeting tools), saves it as memory on a single yes — everything versioned and reversible — and generates a prep brief from what it just stored. Nothing is written until you say so; with no sources connected, it falls back to capturing one touchpoint conversationally. Think of it as the hello-world; `dealflow-memory` below is the product.
 
 1. Create a Fulcra account at [fulcra.ai](https://fulcra.ai) if you don't have one. An empty account is fine — the demo works without prior data.
 2. In Claude, open **Customize → Connectors** and connect **Fulcra**.
@@ -17,7 +17,7 @@ The ongoing version: log conversations as they happen, prep before meetings, rev
 
 1. Same Fulcra account and connector as above.
 2. Download `dealflow-memory.zip` from the [latest release](https://github.com/keng009/fulcra-dealflow-memory/releases/latest) (or zip the `skills/dealflow-memory` folder — its `references/` subfolder must travel inside the zip) and upload it the same way.
-3. Say **"log my call with Jane"**, **"prep me for tomorrow"**, **"what moved this week"**, or **"who have I gone quiet on"**.
+3. Say **"show me my last 30 days"**, **"log my call with Jane"**, **"seen this company before?"**, **"prep me for tomorrow"**, **"what moved this week"**, or **"who have I gone quiet on"**.
 
 Only the Fulcra connector is required. If your Fulcra account has calendar data, the skill detects it and uses it: touchpoints get corroborated against real meetings, and "prep me for tomorrow" reads the actual calendar. If a transcript tool (Otter, Zoom, Fireflies) is connected, it can log meetings straight from transcripts. Nothing to configure — each session it states what it found and what connecting more would add.
 
@@ -25,21 +25,17 @@ Both skills write the same formats to the same `/dealflow/` folder in your accou
 
 ## The first three exchanges
 
-Illustrative — the catalog lines reflect whatever your account actually holds, and if you have nothing to log, the demo offers a clearly labeled sample touchpoint instead.
+Illustrative — the companies and counts reflect your actual month; with no sources connected, the demo falls back to logging one touchpoint conversationally.
 
 > **You:** run the Fulcra dealflow demo
 >
-> **Claude:** Fulcra is connected. Your account already holds two calendars, a file store, and several health and location streams — that's what this demo writes into: your account, not ours. Tell me about a recent conversation with a founder — or anyone in your deal flow. Who was it with, and what company?
->
-> **You:** Call yesterday with Jane Doe, a GP at Acme Ventures. We talked through a possible seed co-invest and she offered to share their diligence checklist. I owe her our deck.
->
-> **Claude:** Recap: Jane Doe (Acme Ventures), call, yesterday — seed co-invest, diligence checklist offered, you owe her the deck. Good to store?
+> **Claude:** Fulcra is connected, and I can see your calendar. One minute while I read your last 30 days… Here's your snapshot — **nothing is saved yet**: **Companies seen** — Acme Ventures (3 meetings), Northstar Robotics (2), Bluefin Bio (1). **People you're spending time on** — Jane Doe (Acme) and the Northstar founders. **Loose ends** — two meetings with no follow-up note anywhere. Want me to keep this as your memory? One yes saves the clear matches — everything is versioned and reversible.
 >
 > **You:** Yes.
 >
-> **Claude:** Written: `/dealflow/relationships/jane-doe.md`, newest touchpoint on top. Created: `/dealflow/README.md` and `INDEX.md` — first run only. Created: a **Dealflow Touchpoint** data type in your account — it didn't exist a minute ago. Recorded: one typed touchpoint against it. The same fact now exists twice — prose you can read, and a structured record other software can query. Reading it back for your prep brief…
+> **Claude:** Saved: six touchpoints across three companies — a narrative file per person plus typed records, a dedupe key on every one. Created `/dealflow/` and the **Dealflow Touchpoint** data type on the way (first run only; it didn't exist a minute ago). Reading it back for your prep brief on Jane…
 
-The brief that follows is generated from the stored data, not from the conversation: the skill reads the file back and checks that the record round-trips before it summarizes.
+The brief that follows is generated from the stored data, not from the conversation — and the snapshot itself wrote nothing until you said yes.
 
 ## What this looks like in real life
 
@@ -78,6 +74,7 @@ Each row is behavior you can watch one of the two skills perform, mapped to the 
 | What the skill does | Fulcra capability |
 |---|---|
 | Opens by naming data your account already holds — sleep, calendars, existing custom types — before writing anything | Data catalog (`get_data_catalog`): agents inspect what an account contains instead of assuming |
+| Shows your last 30 days of deal flow before storing anything, then saves it all on one yes | Read-only analysis over connected sources; versioned files and soft deletes make the batch commit fully reversible |
 | Keeps one narrative file per person under `/dealflow/relationships/`; updating a file creates a new version rather than destroying the old one, and deletes are soft | Versioned file store (`list_files`, `read_file`, `write_file`) |
 | Creates a `Dealflow Touchpoint` data type live in your account, then logs one typed record per touchpoint — the records the "what moved this week" report queries | Custom data types whose records carry structured JSON payloads (`create_data_type`, `record_data`, `get_records`) |
 | Ends the demo by pointing you at the same data in your Fulcra portal and suggesting you ask another connected assistant — ChatGPT, say — "what do you know about Jane?" | Cross-assistant memory: every assistant connected to the account over MCP reads the same files and records |

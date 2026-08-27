@@ -76,6 +76,28 @@ How much automation the full skill detected: Level 1 (Fulcra only, conversationa
 **CRM sync**:
 The optional, detected, one-way copy of touchpoints into the user's CRM as notes on matched contacts. Orthogonal to source levels; never creates contacts, never touches fields or stages.
 
+### The flow
+
+**Snapshot**:
+The read-only analysis of the user's recent deal flow (default 30 days), generated from connected sources and shown before anything is stored. Performs zero writes by definition.
+_Avoid_: report (that's the stored-memory review), audit
+
+**Commit**:
+Converting a snapshot (or deeper backfill) into stored memory on one collective yes (ADR-0005). High-confidence drafts are written; ambiguity is parked, never guessed.
+_Avoid_: import, sync (both mean other things here)
+
+**Backfill**:
+Committing touchpoints from past activity (calendar, transcripts, CRM notes) rather than logging them live. Activity-bounded, never CRM-bounded (ADR-0006); backfilled entries never create open follow-ups.
+
+**Review queue**:
+`/dealflow/review-queue.md` — where ambiguous commit items wait for the user's ruling, each with its evidence. Parked items exist nowhere else until ruled on.
+
+**Sourcing check**:
+The "seen this company before?" lookup at intro time: direct hits, the user's own past judgment, labeled inferences, and a read-only CRM presence check. A read; never writes.
+
+**Tend**:
+The ongoing mode after commit: small deltas offered in one line, vetoes honored immediately, the review queue surfaced occasionally — seconds per day, never a project.
+
 ### The packet
 
 **The demo**:
