@@ -75,7 +75,17 @@ Full flow run on the maintainer's real accounts against a fresh `/dealflow/` nam
 | Read-back | Pass — all 17 payloads round-trip intact via `get_records`; no read lag observed |
 | Veto → tombstone | Pass — one committed touchpoint vetoed: relationship file soft-deleted, INDEX line removed, key added to `## Vetoed keys`; the typed record remains (no per-record delete) but the exclusion filter drops it from reads (16 of 17 surface) |
 
-Still untested from this flow: a commit re-run over the same window (idempotency of the event-start-time ordinal rule — no same-day pairs occurred in this month), and CRM-note-origin keys with the circularity guard (no CRM notes existed to import).
+### 2026-08-27 addendum — key-scheme change + re-run and veto-read tests (post external review)
+
+External review flagged that ordinal-by-event-order calendar keys are not stable (adding/removing an earlier same-day event could shift them). Calendar-derived commit keys moved to the stable per-source form `touch:cal:<event-id>` with a person+date cross-scan (a match on either key form means confirm, not assume). The live run above predates this and wrote date-form keys — still valid standard keys, which is exactly what the cross-scan exists to catch.
+
+| Test | Result |
+|---|---|
+| Commit re-run over the same window (dedupe side) | Pass — re-derived the same batch against the live store: all 7 transcript keys matched directly; every calendar item's cross-scan found the person's date-form key (spot-checked live in file text), resolving confirm → same conversation → skip; zero writes issued |
+| Vetoed key on commit re-run | Pass — the vetoed item was excluded from re-import by the `## Vetoed keys` list (read live from handoff.md) |
+| Veto → Sourcing check | Pass — after the read-path fix (Sourcing now loads the vetoed-keys filter), a sourcing check on the vetoed thread returns "no history": no INDEX hit, record present but excluded |
+
+Still untested from this flow: CRM-note-origin keys with the circularity guard (no CRM notes existed to import); the demo's per-destination record scan (added post-review; the equivalent full-skill path was live-tested 2026-08-26); injected record-only/file-only partial failures under the v3 flow (the v2.1 self-healing fill test covered the record-missing case); and the release-ZIP upload journey end to end (human step, required before any investor walkthrough).
 
 ## Untested surfaces (labeled accordingly in-product)
 

@@ -72,6 +72,7 @@ const RAILS = [
   ["reads-never-write rail", "Reads never write", [full]],
   ["review queue convention", "review-queue.md", [full, contract]],
   ["CRM-origin key form", "touch:attio-note:", [full, contract]],
+  ["calendar-origin key form", "touch:cal:", [demo, full, contract]],
   ["batch consent language", "one collective yes", [full, contract]],
   ["backfill hygiene rail", "Backfilled entries never create open follow-ups", [full, contract]],
   ["circularity guard", "whose title already carries a", [full, contract]],

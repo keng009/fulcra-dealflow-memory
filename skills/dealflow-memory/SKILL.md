@@ -114,7 +114,7 @@ Run this before acting on any request. Keep the spoken output short — two or t
 
 3. **Catalog.** Call `get_data_catalog`. Note whether the `Dealflow Touchpoint` data type already exists (this decides create-vs-skip later) and whether calendar data is present.
 
-4. **Folder (discovery only — bootstrap never writes).** Call `list_files` on `/dealflow/`. Note which of `README.md`, `INDEX.md`, and `handoff.md` are missing, but do NOT create them here: recall and report requests must never mutate the account. Missing files are created only inside Capture (which is an authorized write) or when the user explicitly asks to set the folder up — using the templates below, adding a line to `INDEX.md` for each file created. If the folder exists, read `INDEX.md` to learn what is already stored. Fulcra files are versioned — writing to an existing path creates a new version rather than destroying the old one — so read-modify-write is safe.
+4. **Folder (discovery only — bootstrap never writes).** Call `list_files` on `/dealflow/`. Note which of `README.md`, `INDEX.md`, `handoff.md`, and `review-queue.md` are missing, but do NOT create them here: recall and report requests must never mutate the account. Missing files are created only inside Capture (which is an authorized write) or when the user explicitly asks to set the folder up — using the templates below, adding a line to `INDEX.md` for each file created. If the folder exists, read `INDEX.md` to learn what is already stored. Fulcra files are versioned — writing to an existing path creates a new version rather than destroying the old one — so read-modify-write is safe.
 
    `/dealflow/README.md`:
 
@@ -141,6 +141,7 @@ Run this before acting on any request. Keep the spoken output short — two or t
    - README.md — what this folder is and the rules for writing to it
    - INDEX.md — this file
    - handoff.md — open follow-ups, pending intros, next actions, vetoed keys
+   - review-queue.md — ambiguous items parked for the user's judgment
    ```
 
    `/dealflow/handoff.md`:
@@ -161,15 +162,28 @@ Run this before acting on any request. Keep the spoken output short — two or t
    (none yet)
    ```
 
+   `/dealflow/review-queue.md`:
+
+   ```markdown
+   # Review queue
+
+   Ambiguous items parked for the user's judgment. Each row carries its
+   evidence. Written nowhere else until ruled on. Ruling: log it properly,
+   or drop it.
+
+   | Parked | Item | Evidence | Why uncertain |
+   |---|---|---|---|
+   ```
+
 5. **Detect sources and state the level.** Detect, don't require:
 
    - **Level 1 — Fulcra only.** Conversational capture and recall work fully.
    - **Level 2 — + calendar.** Calendar is detected on EITHER surface, by capability: Fulcra's `get_calendar_events` returns events (catalog shows calendar data, or a ±7-day probe returns events), OR any Claude-side calendar connector is among the connected tools. Use whichever is present; prefer the one with data. Unlocks: the snapshot, touchpoints corroborated against real meetings, and "prep me for tomorrow" reading the actual calendar.
    - **Level 3 — + transcript source.** A transcript tool (Otter, Zoom, Fireflies, or similar) is among the connected tools. Unlocks: logging touchpoints straight from meeting transcripts, and a richer snapshot.
 
-   State the detected level in one line, and in one more line what connecting the next source would unlock — for example: "I've got Fulcra and your calendar (Level 2). Connect a transcript tool like Otter and I can log meetings straight from transcripts." Do not lecture; do not repeat this if the session already covered it.
+   State the detected level in one line. Save the what-connecting-more-would-unlock line for AFTER the session's first moment of delivered value (a snapshot presented, a capture logged, a brief given) — for example: "Connect a transcript tool like Otter and I can log meetings straight from transcripts." Never open with an upsell; do not lecture; do not repeat it if the session already covered it.
 
-6. **Detect CRM and offer sync (never require it).** If tools that can search contacts and create notes are connected (tested: Attio; HubSpot, Notion, and Affinity follow the same shape — see `references/crm-sync.md`), offer once per session: "You have [CRM] connected. Want me to also copy each logged touchpoint there as a note on the matched contact? One-way — I never create contacts or touch fields and stages." Respect the answer for the rest of the session. If no CRM tools are present, never mention CRM at all — no offers, no errors.
+6. **Detect CRM and offer sync (never require it).** If tools that can search contacts and create notes are connected (tested: Attio; HubSpot, Notion, and Affinity follow the same shape — see `references/crm-sync.md`), note it silently at bootstrap and make the offer once per session at the first natural moment after value has been shown — right after a snapshot, commit, or capture, never as an opening pitch: "You have [CRM] connected. Want me to also copy each logged touchpoint there as a note on the matched contact? One-way — I never create contacts or touch fields and stages." Respect the answer for the rest of the session. If no CRM tools are present, never mention CRM at all — no offers, no errors.
 
 ## Snapshot
 
@@ -190,10 +204,10 @@ Trigger: the user accepts the snapshot's offer ("yes, save it"), or asks to "bac
 One collective yes covers the batch (ADR-0005): every HIGH-CONFIDENCE draft the user just saw is written; every ambiguous item goes to `/dealflow/review-queue.md` with its evidence and is written nowhere else until the user rules on it. Never guessed. If the user prefers to go item by item instead, walk the drafts one at a time — per-item review is always available, never required.
 
 1. **Initialize** missing folder files from the Bootstrap templates (commit is an authorized write path, like Capture).
-2. **Write each high-confidence item** per the standard dual-write rules and per-destination dedupe scans. Keys by origin: calendar-derived → `touch:<person-slug>:<YYYY-MM-DD>` (ordinals for same-day, assigned by event start-time order so re-running the same commit reproduces identical keys); transcript-derived → `touch:<transcript-id>`; CRM-note-derived → `touch:<crm>-note:<note-id>` (e.g. `touch:attio-note:<note-id>`). Circularity guard: never import a CRM note whose title already carries a `[touch:` key; that is this system's own sync output.
+2. **Write each high-confidence item** per the standard dual-write rules and per-destination dedupe scans. Keys by origin: calendar-derived → `touch:cal:<event-id>` (the event's stable id — re-runs reproduce identical keys; before writing, cross-scan BOTH this key and the person's `touch:<person-slug>:<date>` family, since earlier data may carry date-form keys — a match on either means confirm, not assume); transcript-derived → `touch:<transcript-id>`; CRM-note-derived → `touch:<crm>-note:<note-id>` (e.g. `touch:attio-note:<note-id>`). Circularity guard: never import a CRM note whose title already carries a `[touch:` key; that is this system's own sync output.
 3. **Backfill hygiene.** Backfilled entries never create open follow-ups; `evidence` names the source exactly (`calendar backfill`, `otter transcript <id>`, `attio note <id>`); `stage_noted` only when present in the source content.
 4. **Park the rest.** Ambiguous items → `review-queue.md`, appended with what was found and why it's uncertain. Tell the user how many are parked; never block on them.
-5. **Commit summary — mandatory.** List exactly what was written (files, records, keys) and what was parked. Remind them everything is reversible: files are versioned and soft-deletable, records archivable.
+5. **Commit summary — mandatory.** List exactly what was written (files, records, keys) and what was parked. State the reversibility terms precisely — never say "everything is reversible": files are versioned and soft-deletable; typed records have no per-record delete — a veto tombstones the key in `handoff.md` and every read excludes it, but the record itself remains stored.
 6. Depth on request: "go deeper" extends to 90 days where transcripts/CRM notes exist, 45–60 days calendar-only, hard stop around 180 days. Re-runs are idempotent — the per-destination scans make repeated commits safe.
 
 ## Capture
@@ -253,7 +267,7 @@ The spoken brief is conversational output and needs no provenance suffix; but if
 Trigger: "have I seen Acme before?", "seen this company before?", "what do I know about this?" with a pasted intro email or deck blurb — the moment a new opportunity arrives.
 
 1. **Extract entities** from whatever was pasted or named: company name, founder names. Zero questions unless extraction genuinely fails.
-2. **Three tiers, cheap to expensive:** (a) scan `INDEX.md` for company and person hits; (b) read matched relationship files, plus `get_records` over a bounded window matching payload `company`/`person`; (c) only on request ("check everywhere"), a deep scan of relationship files bounded to the active set (touchpoints in the last ~6 months).
+2. **Three tiers, cheap to expensive:** (a) scan `INDEX.md` for company and person hits; (b) read matched relationship files, plus `get_records` over a bounded window matching payload `company`/`person` — skipping any record whose `dedupe_key` is on the `## Vetoed keys` list in `handoff.md` (a vetoed touchpoint must never resurface as a hit); (c) only on request ("check everywhere"), a deep scan of relationship files bounded to the active set (touchpoints in the last ~6 months).
 3. **Answer in four parts:** **Direct hits** (dated touchpoints with the company or its people — person hits matter: the user may have met the founder before this company existed); **Your past judgment** (the most recent `Stage noted:` and the summary around it — "you passed in March; your note says the space felt crowded"); **Possibly related** (adjacency inferred from summaries, ALWAYS labeled as inference from their notes); **CRM check** (read-only, when a CRM is connected: one search — "in your Attio with 3 notes, never logged to memory," or absent everywhere).
 4. **The empty result is a real answer**: "no history — this is genuinely new to you." Never pad it.
 

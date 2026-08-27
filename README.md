@@ -4,11 +4,11 @@ Two Claude skills that give your deal flow a memory, on your own [Fulcra](https:
 
 ## See it in 10 minutes — `dealflow-demo`
 
-One guided session — about ten minutes once installed. The skill inspects your Fulcra data catalog, builds a **read-only snapshot of your last 30 days of deal flow** from whatever you've connected (calendar, meeting tools), saves it as memory on a single yes — everything versioned and reversible — and generates a prep brief from what it just stored. Nothing is written until you say so; with no sources connected, it falls back to capturing one touchpoint conversationally. Think of it as the hello-world; `dealflow-memory` below is the product.
+One guided session — about ten minutes once installed. The skill inspects your Fulcra data catalog, builds a **read-only snapshot of your last 30 days of deal flow** from whatever you've connected (calendar, meeting tools), saves it as memory on a single yes — files versioned, any saved item strikeable later via a veto list — and generates a prep brief from what it just stored. Nothing is written until you say so; with no sources connected, it falls back to capturing one touchpoint conversationally. Think of it as the hello-world; `dealflow-memory` below is the product.
 
 1. Create a Fulcra account at [fulcra.ai](https://fulcra.ai) if you don't have one. An empty account is fine — the demo works without prior data.
 2. In Claude, open **Customize → Connectors** and connect **Fulcra**.
-3. Download `dealflow-demo.zip` from the [latest release](https://github.com/keng009/fulcra-dealflow-memory/releases/latest) (or zip the `skills/dealflow-demo` folder yourself) and upload it in Claude under **Customize → Skills → Add**. If Skills isn't visible, enable it under **Settings → Capabilities** first.
+3. Download `dealflow-demo.zip` from the [latest release](https://github.com/keng009/fulcra-dealflow-memory/releases/latest) (or zip the `skills/dealflow-demo` folder yourself) and upload it in Claude under **Customize → Skills → + Create skill → Upload a skill**. If Skills isn't visible, enable it under **Settings → Capabilities** first.
 4. Start a new chat and say: **"run the Fulcra dealflow demo"**.
 
 ## Make it your workflow — `dealflow-memory`
@@ -29,7 +29,7 @@ Illustrative — the companies and counts reflect your actual month; with no sou
 
 > **You:** run the Fulcra dealflow demo
 >
-> **Claude:** Fulcra is connected, and I can see your calendar. One minute while I read your last 30 days… Here's your snapshot — **nothing is saved yet**: **Companies seen** — Acme Ventures (3 meetings), Northstar Robotics (2), Bluefin Bio (1). **People you're spending time on** — Jane Doe (Acme) and the Northstar founders. **Loose ends** — two meetings with no follow-up note anywhere. Want me to keep this as your memory? One yes saves the clear matches — everything is versioned and reversible.
+> **Claude:** Fulcra is connected, and I can see your calendar. One minute while I read your last 30 days… Here's your snapshot — **nothing is saved yet**: **Companies seen** — Acme Ventures (3 meetings), Northstar Robotics (2), Bluefin Bio (1). **People you're spending time on** — Jane Doe (Acme) and the Northstar founders. **Loose ends** — two meetings with no follow-up note anywhere. Want me to keep this as your memory? One yes saves the clear matches; anything I'm unsure about goes to a review queue, and anything saved can be struck later.
 >
 > **You:** Yes.
 >
@@ -74,7 +74,7 @@ Each row is behavior you can watch one of the two skills perform, mapped to the 
 | What the skill does | Fulcra capability |
 |---|---|
 | Opens by naming data your account already holds — sleep, calendars, existing custom types — before writing anything | Data catalog (`get_data_catalog`): agents inspect what an account contains instead of assuming |
-| Shows your last 30 days of deal flow before storing anything, then saves it all on one yes | Read-only analysis over connected sources; versioned files and soft deletes make the batch commit fully reversible |
+| Shows your last 30 days of deal flow before storing anything, then saves it all on one yes | Read-only analysis over connected sources; the file side is fully reversible (versions + soft deletes), and a vetoed record is tombstoned — excluded from every read, though the record itself stays stored (typed records have no per-record delete) |
 | Keeps one narrative file per person under `/dealflow/relationships/`; updating a file creates a new version rather than destroying the old one, and deletes are soft | Versioned file store (`list_files`, `read_file`, `write_file`) |
 | Creates a `Dealflow Touchpoint` data type live in your account, then logs one typed record per touchpoint — the records the "what moved this week" report queries | Custom data types whose records carry structured JSON payloads (`create_data_type`, `record_data`, `get_records`) |
 | Ends the demo by pointing you at the same data in your Fulcra portal and suggesting you ask another connected assistant — ChatGPT, say — "what do you know about Jane?" | Cross-assistant memory: every assistant connected to the account over MCP reads the same files and records |

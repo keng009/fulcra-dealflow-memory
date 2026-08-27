@@ -58,7 +58,7 @@ Generate a read-only mini-snapshot of their last 30 days. The snapshot performs 
 1. Sweep the calendar window in weekly chunks (never one giant query); with a transcript tool, list the window's transcripts too.
 2. Keep meetings with external attendees; group by company via attendee email domains and names; drop solo blocks, declined events (unless another source shows the meeting actually happened — sources beat RSVP status), and personal noise.
 3. Present it compactly: **Companies seen** (with counts), **People you're spending time on**, **Loose ends** (meetings with no follow-up trace), and — transcripts permitting — a couple of one-line what-was-said highlights. A few sentences of framing, not a report: this was generated from their own month, before anything was stored.
-4. Offer the save: "Want me to keep this as your memory? One yes saves the clear matches — everything is versioned and reversible; anything I'm unsure about stays out, and I'll tell you what I left out (the full skill keeps a review queue for those)." On yes: write the clearly-matched touchpoints using the formats below — creating the folder files and the data type first as needed, backfill entries carrying `evidence` that names the source exactly (`calendar backfill`) and creating no open follow-ups; same-day ordinals follow event start-time order, so a re-run reproduces the same keys. Then give a one-line commit summary — who was saved, what was left out and why — and go to the payoff using the most interesting saved person.
+4. Offer the save: "Want me to keep this as your memory? One yes saves the clear matches — files are versioned, and you can strike any saved item later (a veto excludes it from every read; the record itself has no per-record delete and stays stored). Anything I'm unsure about gets parked in a review queue, not guessed." On yes: write the clearly-matched touchpoints using the formats below — creating the folder files and the data type first as needed, calendar-derived keys as `touch:cal:<event-id>` (the event's stable id, so a re-run reproduces the same keys), backfill entries carrying `evidence` that names the source exactly (`calendar backfill`) and creating no open follow-ups. Park each unsure item as a row in `/dealflow/review-queue.md` (create it per the folder-files section if absent). Then give a one-line commit summary — who was saved, what was parked and why — and go to the payoff using the most interesting saved person.
 5. On no, or if the snapshot looks thin: fall through to Path B with one touchpoint of their choosing — the demo still works.
 
 ### Path B — Conversational capture (no sources, or by choice)
@@ -80,11 +80,11 @@ Before writing anything, recap in one line (person, company, channel, date, gist
 ### Compute the slug and key
 
 - Person slug: lowercase, hyphens, from person name (`jane-doe`); append company slug only when two people collide (`jane-doe-acme`).
-- Dedupe key: `touch:<person-slug>:<YYYY-MM-DD>` — the date the touchpoint occurred. (Additional same-day touchpoints append the next unused ordinal — `-2`, `-3` — per the data contract.)
+- Dedupe key, conversational capture (Path B): `touch:<person-slug>:<YYYY-MM-DD>` — the date the touchpoint occurred. (Additional same-day touchpoints append the next unused ordinal — `-2`, `-3` — per the data contract.) Path A calendar-derived saves use `touch:cal:<event-id>` — the event's stable id — instead.
 
-### Scan before writing
+### Scan before writing (per destination — self-healing)
 
-Call `list_files` under `/dealflow/`. If `/dealflow/relationships/<slug>.md` exists, `read_file` it and scan for the key. If the key is already present, confirm with the user: the same conversation → skip the writes, tell them this touchpoint was already logged, and go straight to step 4 using the stored data — that's the duplicate protection working, and it's worth one sentence saying so. A different conversation on the same day → append the next unused ordinal to the key (`-2`, `-3`) and proceed with the writes as its own touchpoint.
+Call `list_files` under `/dealflow/`. If `/dealflow/relationships/<slug>.md` exists, `read_file` it and scan for the key. Also scan the typed records: if the Dealflow Touchpoint type exists in the catalog, `get_records` around the touchpoint date and match payload `dedupe_key`s — for a calendar-derived save, match both its `touch:cal:` key and the person's date-form key family. Write only whichever representations are missing: a half-completed earlier write (file without record, or record without file) heals here instead of duplicating. If the key is already present in every representation, confirm with the user: the same conversation → skip the writes, tell them this touchpoint was already logged, and go straight to step 4 using the stored data — that's the duplicate protection working, and it's worth one sentence saying so. A different conversation on the same day → append the next unused ordinal to the key (`-2`, `-3`) and proceed with the writes as its own touchpoint.
 
 ### Write the narrative file
 
@@ -143,6 +143,18 @@ this folder.
 ```
 
 If `INDEX.md` already exists, add one line for the relationship file you just created (if it's new) and leave the rest untouched.
+
+`/dealflow/review-queue.md` (Path A only, and only when the save parked at least one unsure item — same format the full skill uses; add its `INDEX.md` line too):
+
+```markdown
+# Review queue
+
+Ambiguous items parked for the user's judgment. Each row carries its
+evidence. Written nowhere else until ruled on.
+
+| Parked | Item | Evidence | Why uncertain |
+|---|---|---|---|
+```
 
 ### Write the typed record
 
