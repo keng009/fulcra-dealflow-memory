@@ -37,6 +37,8 @@ Status: **designed-for, untested** — no messaging connector has been live-test
 
 Reading a messaging tool is a read: it never sends, replies, reacts, or marks anything read on the user's behalf — the drafts-only rail applies to messaging exactly as it does everywhere else.
 
+**Composition with CRM auto-loggers**: if a third-party tool already lands message threads in the CRM as notes (e.g. a WhatsApp-to-HubSpot logger), those arrive through the CRM-note import path in `crm-sync.md` — with its `touch:<crm>-note:<id>` keys and circularity guard — and need no messaging tier at all.
+
 ## The browser-observation tier (scheduled, human-paced)
 
 For apps with no API and no connector — LinkedIn DMs and WhatsApp Web being the big two — there is a third tier: an agent session that drives the **user's own logged-in browser** to read (never send) recent messages, on a schedule the user set (e.g. late morning and late afternoon). This is the maintainer's production workflow for exactly these channels.
