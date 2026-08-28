@@ -111,6 +111,7 @@ The snapshot is an on-the-fly analysis of the user's recent deal flow (default: 
 - Going-quiet needs depth the display window lacks: when showing a 30-day snapshot, extend a headline-only sweep to ~60 days for the going-quiet check, or omit the section and say why.
 - Transcript and CRM sources, where connected, enrich with what-was-said and tracked-vs-untracked gaps — reads only.
 - Degrade honestly: with fewer sources, say what is missing and what connecting it would add.
+- Load the veto set first (rule 4): an item whose would-be key (either form) is vetoed never appears in the snapshot or its ledger.
 
 ## Commit, confidence, and backfill hygiene
 

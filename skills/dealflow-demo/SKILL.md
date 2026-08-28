@@ -33,7 +33,7 @@ Pace: steps 1–2 about two minutes, step 3 about five, steps 4–5 the rest. Sh
 
 ## 1. Preflight
 
-Check whether the Fulcra tools are available in this session: `get_data_catalog`, `get_user_info`, `list_files`, `read_file`, `write_file`, `create_data_type`, `record_data`, `get_records`.
+Check whether the Fulcra tools are available in this session: `get_data_catalog`, `get_user_info`, `list_files`, `read_file`, `write_file`, `create_data_type`, `record_data`, `get_records`, `delete_file`.
 
 If they are not, stop the demo entirely and say:
 
@@ -229,4 +229,4 @@ Close in a few lines, no push:
 - This persisted — the file and the record stay in their account after this chat ends.
 - The **dealflow-memory** skill uses the same folder and the same formats, so today's touchpoint carries over as-is, zero migration. It adds daily capture ("log my call with …"), meeting prep ("prep me for …"), weekly reporting ("what moved this week"), stale-relationship alerts, calendar awareness, and optional one-way CRM sync.
 - To install it: same steps as this skill, with the `dealflow-memory` folder.
-- If they logged the sample touchpoint, offer cleanup — three parts, narrated plainly: (1) soft-delete the sample relationship file (`delete_file`, reversible) and remove its `INDEX.md` line; (2) the sample typed record has no per-record delete through this connector, so (3) tombstone it — create `/dealflow/handoff.md` from the template in the folder-files section if it doesn't exist (adding its INDEX line) and add the sample's key under `## Vetoed keys` — which leaves the record stored but excluded from every read these skills perform. Without the tombstone, sample data would surface in future reports; with it, it cannot.
+- If they logged the sample touchpoint, offer cleanup — three parts, in THIS order, narrated plainly: (1) tombstone FIRST — create `/dealflow/handoff.md` from the template in the folder-files section if it doesn't exist (adding its INDEX line) and add the sample's key under `## Vetoed keys`, so that even an interrupted cleanup leaves the undeletable record excluded; (2) soft-delete the sample relationship file (`delete_file`, reversible) and remove its `INDEX.md` line; (3) say plainly that the sample typed record has no per-record delete through this connector — it remains stored but excluded from every read these skills perform. Without the tombstone, sample data would surface in future reports; with it, it cannot.

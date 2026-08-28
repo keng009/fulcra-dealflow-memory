@@ -25,7 +25,7 @@ A CRM not named in this file still works if its connector fills the slots — fo
 
 ## Principles (all CRMs)
 
-1. **One-way, Fulcra → CRM.** The CRM is the user's system of record for pipeline; Fulcra holds the narrative files and typed records. Sync pushes touchpoint notes into the CRM. Nothing is ever synced back, and a failed CRM write never blocks or rolls back the Fulcra write — the Fulcra side is already complete before the CRM write starts.
+1. **Sync is one-way, Fulcra → CRM.** The CRM is the user's system of record for pipeline; Fulcra holds the narrative files and typed records. Sync pushes touchpoint notes into the CRM, and nothing sync-related ever flows back. (The separate CRM-note IMPORT — slots 2–3 — reads existing notes into memory under `touch:<crm>-note:<id>` keys with the circularity guard; that is a read path with its own consent, not a reverse sync.) A failed CRM write never blocks or rolls back the Fulcra write — the Fulcra side is already complete before the CRM write starts.
 2. **Contact matching: email first, then name.** Search the CRM's people/contacts for the person's email address. If the email is unknown or finds nothing, search by full name. If neither finds exactly one plausible match, skip the CRM write and tell the user — do not guess between multiple matches.
 3. **Never create contacts.** If the person is not in the CRM, skip the write and say so. If the user wants them in the CRM, they add the contact there themselves and can then say "retry the CRM sync for <person>".
 4. **Never edit CRM fields, stages, amounts, owners, or lists.** The only writes are: a note attached to an existing contact, and (where the CRM supports it and the user wants it) tasks for follow-ups. No other CRM object is created or modified.

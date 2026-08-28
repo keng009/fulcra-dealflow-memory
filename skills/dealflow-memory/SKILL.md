@@ -113,7 +113,7 @@ A filled example:
 
 Run this before acting on any request. Keep the spoken output short — two or three sentences, not a status report.
 
-1. **Preflight.** Confirm the Fulcra tools are available (`get_data_catalog`, `get_user_info`, `list_files`, `read_file`, `write_file`, `create_data_type`, `record_data`, `get_records`). If they are not, stop and say exactly what to do: "Fulcra isn't connected. In Claude, go to Customize → Connectors and connect Fulcra, then try again." Never fake success or pretend data exists.
+1. **Preflight.** Confirm the Fulcra tools are available (`get_data_catalog`, `get_user_info`, `list_files`, `read_file`, `write_file`, `create_data_type`, `record_data`, `get_records`, `delete_file`). If they are not, stop and say exactly what to do: "Fulcra isn't connected. In Claude, go to Customize → Connectors and connect Fulcra, then try again." Never fake success or pretend data exists.
 
 2. **Timezone.** Call `get_user_info` and use the user's timezone for every timestamp you write (provenance suffixes, `recorded_at`, record timestamps). Always pass a timezone when a Fulcra tool takes one.
 
@@ -197,7 +197,7 @@ Run this before acting on any request. Keep the spoken output short — two or t
 
 Trigger: "show me my last 30 days", "snapshot my deal flow", "what does my deal flow look like", or a first-run session where sources exist and the user wants to see value before logging anything.
 
-The snapshot is a read-only analysis of the user's recent deal flow, generated from whatever sources bootstrap detected and shown BEFORE anything is stored. The snapshot performs zero writes.
+The snapshot is a read-only analysis of the user's recent deal flow, generated from whatever sources bootstrap detected and shown BEFORE anything is stored. The snapshot performs zero writes. Contract rule 4 applies to it as a read: load the veto set first — an item whose would-be key (either form) is vetoed never appears in the snapshot, its ledger, or the commit that follows.
 
 1. **Sweep the window.** Default: the last 30 days of calendar (either surface, per bootstrap), read in weekly chunks — never one giant query. At Level 3, list transcripts in the window; with a CRM connected (read-only here), fetch recent notes/meetings by date.
 2. **Identify deal flow.** Keep events with external attendees; drop solo blocks, internal recurring meetings, and personal noise. Skip events the user declined — unless a transcript or CRM note shows the meeting actually happened (sources beat RSVP status). Named meetings with no attendee data are ambiguous, not evidence. Group by company using attendee email domains and names; identify the people the user actually spent time with.
@@ -228,7 +228,7 @@ Trigger: "log my call with Jane", "log my meeting with the Acme founders", "I ju
 
 3. **Transcript capture (Level 3).** When logging from a transcript: list the user's recent transcripts, let them pick, and distill each chosen transcript into the same fields (summary stays 2-5 sentences). The dedupe key is `touch:<transcript-id>` — the transcript's own id — and the evidence names the source, e.g. `otter transcript abc123`.
 
-4. **Compute slug and key.** Slug the person's name (lowercase, hyphens: `jane-doe`). Check `/dealflow/relationships/` for an existing file: same person → use their file; a *different* person already holding that slug → append the company slug (`jane-doe-acme`). Standard key: `touch:<person-slug>:<YYYY-MM-DD>` with the date the touchpoint occurred.
+4. **Compute slug and key.** Slug the person's name (lowercase, hyphens: `jane-doe`). Check `/dealflow/relationships/` for an existing file: same person → use their file; a *different* person already holding that slug → append the company slug (`jane-doe-acme`). The date-form key `touch:<person-slug>:<YYYY-MM-DD>` applies ONLY when no per-source key does: a transcript capture (step 3) keeps its `touch:<transcript-id>`, a connector-tier message thread keeps `touch:<tool>-thread:<id>`, and a CRM-note import keeps `touch:<crm>-note:<id>`. A stable source key is never replaced by the date form.
 
 5. **Per-destination dedupe scan (self-healing).** Check each representation against its own store:
    - **File**: if the relationship file exists, scan its full text for the base key and its ordinals — headings and the `### Earlier` digest both count.
