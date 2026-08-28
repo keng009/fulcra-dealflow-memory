@@ -27,6 +27,14 @@ User-visible changes to the skill packet. Format follows [Keep a Changelog](http
 - **Three-part sample cleanup**: the demo's cleanup soft-deletes the sample file, updates INDEX, and tombstones the sample key so sample data can never surface in reports.
 - Per-destination veto disclosure (incl. the exact manual CRM deletion step); `get_user_info` in both preflights; delete-capability slot 7 in the CRM registry; "excluded from every read" scoped to these skills everywhere, with third-party readers told to apply the veto list.
 
+### Fixed (2026-08-28, review rounds 6–7)
+- **Stable-key precedence**: the date-form dedupe key applies only when no per-source key (calendar event id, transcript id, CRM note id, thread id) does — a stable source key is never replaced by the date form.
+- **Interruption-safe sample cleanup**: the demo's cleanup order is now tombstone first, then soft-delete, then the plain-words summary — an interruption can no longer leave sample data live with no tombstone.
+- **Snapshot loads the veto set before presenting** (single veto invariant made explicit at the snapshot surface, not just at reads and commits).
+- `delete_file` added to both skills' connector preflights (cleanup and rule-2 veto need it).
+- **Sync-vs-import honesty**: crm-sync principle 1 and the README now state that CRM-note *import* (slots 2–3) is a separate consented read path — selection, never mirroring — not a reverse sync.
+- First live sweep run recorded (see testing.md 2026-08-28): first-run window rule, park-once, circularity guard, cross-key duplicate detection, zero-commit resolution, failure-safe watermark write.
+
 ### Changed
 - **Breaking (key scheme)**: calendar-derived commit keys are now the source event's stable id — `touch:cal:<event-id>` — instead of person+date ordinals, so re-runs and same-day re-orderings cannot shift keys. Data written under the date-form scheme stays valid: commits cross-scan both key forms and confirm on any match.
 - Declined calendar events are skipped unless another source (transcript, CRM note) shows the meeting happened — sources beat RSVP status.

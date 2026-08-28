@@ -114,7 +114,24 @@ External review flagged that ordinal-by-event-order calendar keys are not stable
 
 (The demo's per-destination scan follows the same mechanics exercised here; running it inside Claude's actual skill UI remains part of the #31 journey.)
 
-Still untested from this flow: the release-ZIP upload journey end to end (#31 — human step, required before any investor walkthrough); the scheduled-sweep Tend behavior (#38) and CRM note-placement slot 6 (#39), both specified 2026-08-28 and awaiting live runs; the messaging browser-observation and connector tiers (#37/#44).
+Still untested from this flow: the release-ZIP upload journey end to end (#31 — human step, required before any investor walkthrough); the sweep's *scheduled* trigger (#38 — the sweep mechanics themselves were live-tested 2026-08-28, below); CRM note-placement slot 6 (#39); the messaging browser-observation and connector tiers (#37/#44).
+
+## 2026-08-28 — First live sweep (Tend rule 5 mechanics, #38) — manually triggered
+
+Run on the maintainer's real accounts against the live `/dealflow/` store (21 touchpoints, 1 veto, 3 parked items). Manually triggered — the scheduled-trigger variant is the remaining #38 residual; the mechanics below are what a scheduled run executes.
+
+| Test | Result |
+|---|---|
+| First-run rule: no `## Sweep watermarks` section in handoff.md → bounded default window used and stated | Pass |
+| Three sources swept: calendar (Claude GCal connector), transcripts (Otter), CRM notes (Attio, by created-after) | Pass |
+| Noise + internal filtering on real data | Pass — colleague meetings, sub-minute transcript fragments, and scheduler-generated travel/hold blocks all excluded |
+| Park-once: previously parked items (an attendee-less named meeting; a no-summary transcript) re-surfaced by the source reads | Pass — recognized in `review-queue.md`, not re-offered |
+| Circularity guard: the skill's own sync note (title carries `[touch:`) returned by the CRM created-after read | Pass — refused as this system's output |
+| Already-imported CRM note (its `touch:<crm>-note:<id>` key already stored) | Pass — skipped, zero writes |
+| Cross-key duplicate detection: CRM notes written by a *different* automation, whose titles carry a transcript id already stored as a `touch:<transcript-id>` key | Pass — recognized as the same conversation, not imported under a second key |
+| New ambiguous item (attendee-less named calendar event) | Pass — parked in `review-queue.md` with evidence, written nowhere else |
+| Digest resolution with zero commit candidates | Pass — no consent prompt needed (nothing to store), parked items are the resolution |
+| Failure-safe ordering: watermark write performed last, only after full resolution | Pass — `## Sweep watermarks` created with one ISO-8601 line per source; read back intact alongside `## Vetoed keys` |
 
 ## Untested surfaces (labeled accordingly in-product)
 
