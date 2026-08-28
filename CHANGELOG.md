@@ -13,7 +13,7 @@ User-visible changes to the skill packet. Format follows [Keep a Changelog](http
 
 ### Added (2026-08-27, late)
 - **`message` channel** for DM/text-thread touchpoints, plus a messaging-capture registry (`references/messaging-capture.md`): paste-based capture from any app (WhatsApp, Telegram, Signal, iMessage/SMS, LinkedIn, Slack, …) with per-app format notes, and a capability-based connector tier for tools that can read conversations directly.
-- **CRM capability tiers and adapter registry** (`references/crm-sync.md`): Tier R (read — tracked-check + note import; HubSpot's official connector qualifies) vs Tier W (read/write — full sync), a five-slot tool-mapping format, and a 10-minute "Add your CRM" promotion protocol so anyone can bring their CRM.
+- **CRM capability tiers and adapter registry** (`references/crm-sync.md`): Tier R (read — tracked-check + note import; HubSpot's official connector qualifies) vs Tier W (read/write — full sync), a six-slot tool-mapping format, and a 10-minute "Add your CRM" promotion protocol so anyone can bring their CRM.
 - **docs/why-fulcra.md**: what the skills use Fulcra for, the value, and the honestly drawn necessary-vs-convenient line (README links it).
 - **README chooser** ("which skill do I install?"), from the first live cross-harness install review.
 - **docs/mcp-operations.md**: the complete MCP conformance list (the skills' regression surface) and **docs/harness-matrix.md**: dated per-harness install evidence.

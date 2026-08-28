@@ -114,7 +114,7 @@ External review flagged that ordinal-by-event-order calendar keys are not stable
 
 (The demo's per-destination scan follows the same mechanics exercised here; running it inside Claude's actual skill UI remains part of the #31 journey.)
 
-Still untested from this flow: the release-ZIP upload journey end to end (#31 — human step, required before any investor walkthrough).
+Still untested from this flow: the release-ZIP upload journey end to end (#31 — human step, required before any investor walkthrough); the scheduled-sweep Tend behavior (#38) and CRM note-placement slot 6 (#39), both specified 2026-08-28 and awaiting live runs; the messaging browser-observation and connector tiers (#37/#44).
 
 ## Untested surfaces (labeled accordingly in-product)
 

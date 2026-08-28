@@ -58,10 +58,11 @@ for (const [i, t] of [contract, demo, full].entries()) {
 }
 for (const [label, needle, targets] of SHARED) {
   if (!contract.includes(needle)) { fail(`contract drift: ${CONTRACT} itself lacks the canonical ${label}: ${needle}`); continue; }
+  const before = failures;
   targets.forEach((t, i) => {
     if (!t.includes(needle)) fail(`contract drift: ${SKILLS[i]} lacks the canonical ${label}`);
   });
-  ok(`contract: ${label} aligned`);
+  if (failures === before) ok(`contract: ${label} aligned`);
 }
 
 // ---------- 3. Required rails ----------
@@ -78,15 +79,17 @@ const RAILS = [
   ["circularity guard", "whose title already carries a", [full, contract]],
   ["confidence tier (ambiguity parked)", "Never guessed", [full, contract]],
   ["veto tombstone list", "## Vetoed keys", [full, contract]],
-  ["veto-set-first invariant", "Load the veto set first", [full, contract]],
+  ["veto-set-first invariant", "Load the veto set first", [demo, full, contract]],
   ["messaging capture reference", "messaging-capture.md", [full, contract]],
+  ["messaging-thread key form", "-thread:<id>", [full, contract]],
   ["any-match-confirms rule", "already present in ANY representation", [full, contract]],
 ];
 for (const [label, needle, targets] of RAILS) {
+  const before = failures;
   targets.forEach((t) => {
     if (!t.includes(needle)) fail(`missing rail: ${label} ("${needle}") not found in a skill that requires it`);
   });
-  ok(`rail: ${label} present`);
+  if (failures === before) ok(`rail: ${label} present`);
 }
 
 // ---------- 4. No unshipped Fulcra features ----------

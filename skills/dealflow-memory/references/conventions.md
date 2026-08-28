@@ -51,6 +51,7 @@ Exact formats:
 - Calendar-derived (commit/backfill from a calendar event): `touch:cal:<event-id>` — the source calendar's stable event id, so re-runs cannot shift keys and adding or removing another same-day event cannot re-order them. Cross-scan rule: before writing a calendar-derived touchpoint, scan for BOTH its `touch:cal:` key and the person's `touch:<person-slug>:<YYYY-MM-DD>` family — a match on either form means confirm, not assume (earlier data may carry date-form keys).
 - Source Level 3 (touchpoint logged from a meeting transcript): `touch:<transcript-id>` — the transcript's own id, so re-processing the same transcript cannot create a duplicate.
 - CRM-origin (touchpoint imported from an existing CRM note during commit/backfill): `touch:<crm>-note:<note-id>` — e.g. `touch:attio-note:2f6b2a2a…` — the note's stable id in that CRM. Circularity guard: never import a CRM note whose title already carries a `[touch:` key; that is this system's own sync output.
+- Messaging-thread origin (connector tier only): `touch:<tool>-thread:<id>` — the messaging tool's stable thread or message id, where one exists (see `messaging-capture.md`); pasted threads have no stable id and use the standard date-form key.
 
 Person slug rule: lowercase, hyphens, from person name (`jane-doe`); append company slug only when two people collide (`jane-doe-acme`).
 

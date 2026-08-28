@@ -46,6 +46,6 @@ Rules on top of the universal tier:
 - **User's own browser, user's own schedule, read-only.** No plugins, no credential handoff, no third-party session cloud. Low frequency, human-like pacing, minimal surface area — behave like the user glancing at their inbox, because operationally that is what it is.
 - Capture output is identical to a paste: channel `message`, one touchpoint per thread per day, evidence in the form `browser observation, linkedin dms 2026-08-28`.
 - No stable per-source ids are assumed from a browser read → date-form keys with the confirm-on-match rule.
-- Pairs naturally with the scheduled sweep digest (tracker: the sweep issue) — observed threads become one-line Tend deltas, committed on one yes.
+- Pairs naturally with the scheduled sweep digest ([#38](https://github.com/keng009/fulcra-dealflow-memory/issues/38)) — observed threads become one-line Tend deltas, committed on one yes.
 
 Status: **designed-for, untested in this repo** — the pattern runs in production for the maintainer but has no sanitized `docs/testing.md` row yet; that row is what promotes it.

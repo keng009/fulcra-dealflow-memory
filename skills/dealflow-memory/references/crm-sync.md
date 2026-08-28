@@ -6,7 +6,7 @@ CRM involvement is optional and detected, never required. If no CRM tools are co
 
 ## Capability tiers — a CRM qualifies by what its tools can do, not by name
 
-Map whatever CRM tools are connected onto five capability slots:
+Map whatever CRM tools are connected onto six capability slots (5 and 6 are optional):
 
 | Slot | Capability | Needed for |
 |---|---|---|
@@ -75,7 +75,14 @@ Tested against a live Attio workspace via the official Attio connector (write pa
 
 ## HubSpot (Tier R via the official connector; Tier W untested)
 
-Same principles; not yet verified against a live workspace.
+Same principles; Tier W not yet verified against a live workspace.
+
+| Slot | HubSpot surface |
+|---|---|
+| 1–3 (Tier R) | Official connector: contact search + engagement reads — live today |
+| 4 | Note engagement create — requires a write-capable HubSpot MCP server (untested) |
+| 5 | Task engagement create — same requirement (untested) |
+| 6 | Note associations to deals/companies/tickets (untested) |
 
 - **Important**: Claude's official HubSpot connector is **read-only** (verified 2026-08-21) — it cannot create notes, so it cannot carry this sync. HubSpot sync applies only when the user has a separate **write-capable HubSpot MCP server** connected. Detect by capability (can it create a note engagement?), not by connector name; with only the read-only connector present, say so and skip HubSpot sync entirely. The read-only connector still fills slots 1–3, so HubSpot works fully as a Tier R read source (tracked-vs-untracked check, CRM-note import).
 - **Closest primitive**: a note engagement associated with a contact.
@@ -86,6 +93,14 @@ Same principles; not yet verified against a live workspace.
 
 Same principles; not yet verified. Notion's official connector is read/write.
 
+| Slot | Notion surface |
+|---|---|
+| 1 | Search in the user-named contacts database |
+| 2–3 | Read the matched contact page's blocks |
+| 4 | Append one block to the contact's existing page — the only write |
+| 5 | Not used |
+| 6 | Not used — placing content on other pages would invent structure |
+
 - Many investors run their pipeline as a Notion database of people or deals. **Ask the user which database holds their contacts** — never guess; it is searched for the contact match only.
 - **Scope (keeps the "notes and tasks only" promise honest)**: the ONLY write is a block appended to the matched contact's existing page — the note-equivalent. Never create pages or rows in the user's databases, and never add properties to their schema; both count as creating CRM objects, which this sync never does. If the user's setup has no per-contact page to append to, say so and skip Notion sync rather than inventing structure.
 - Put the key in the first line of the appended block. Dedupe scan = read the contact page's existing blocks and look for the key. Verify the first write by reading it back (as with any title-less primitive).
@@ -93,6 +108,14 @@ Same principles; not yet verified. Notion's official connector is read/write.
 ## Affinity (Tier W — designed for, untested)
 
 Same principles; not yet verified.
+
+| Slot | Affinity surface |
+|---|---|
+| 1 | Person search |
+| 2–3 | List and read notes on a person |
+| 4 | Create a note on a person |
+| 5 | Tasks/reminders where the connector exposes them (verify) |
+| 6 | Note association to organizations/opportunities (verify) |
 
 - Affinity has an official **read/write** Claude connector (verified 2026-08-21) that supports creating notes on records — making it a strong candidate for the next tested CRM, since it is the VC-native one.
 - **Closest primitive**: a note attached to a person. If the note primitive has no title field, use the first-line-of-body placement and read-back verification described under HubSpot.
@@ -105,11 +128,11 @@ When syncing to any CRM other than Attio, state the status honestly before the f
 
 Anyone with a CRM connector can add their CRM to this file and promote it to `tested`:
 
-1. **Map the slots.** List your connector's tools and fill the five capability slots above. Slots 1–3 only → your CRM is Tier R (still valuable — say so in its section). No slot-1 tool → the CRM can't participate; stop here.
-2. **Run the write test** (Tier W): pick one contact you own, ask the skill to log a touchpoint and sync it. Verify: the note lands with the key in its title (or first body line for title-less primitives), and the body follows the Note format above.
-3. **Run the dedupe test**: sync the same touchpoint again. Expected: the title scan finds the key and the skill writes nothing, saying so.
-4. **Run the import + circularity test** (Tier R and W): create one hand-written note on that contact, ask the skill to import CRM notes for them. Expected: the hand-written note imports under `touch:<crm>-note:<id>`; the skill-written sync note is refused (its title carries `[touch:` — the circularity guard).
-5. **Record it, sanitized**: add a dated table to `docs/testing.md` (no real names — "a contact in a test workspace"), following the existing Attio rows as the format.
+1. **Map the slots.** List your connector's tools and fill the capability slots above. Slots 1–3 only → your CRM is Tier R (still valuable — say so in its section). No slot-1 tool → the CRM can't participate; stop here.
+2. **Run the write test** (Tier W): pick one contact you own and say: *"Log a call with <contact> from yesterday — we discussed <anything true>. Then sync it to <CRM>."* Verify: the note lands with the key in its title (or first body line for title-less primitives), and the body follows the Note format above.
+3. **Run the dedupe test**: say *"Sync that same touchpoint to <CRM> again."* Expected: the title scan finds the key and the skill writes nothing, saying so.
+4. **Run the import + circularity test** (Tier R and W): create one hand-written note on that contact in the CRM UI, then say: *"Import <contact>'s CRM notes into memory."* Expected: the hand-written note imports under `touch:<crm>-note:<id>`; the skill-written sync note is refused (its title carries `[touch:` — the circularity guard).
+5. **Record it, sanitized**: add a dated table to `docs/testing.md` (no real names — "a contact in a test workspace"). Row template: `| <step name> | Pass/Fail — one factual clause |`, one row per protocol step, matching the existing Attio tables.
 6. **PR the registry entry**: a section in this file titled `## <CRM> (Tier R|W — tested)` with the slot table, quirks (title-less notes? no delete tool? markdown support?), and a pointer to your testing.md rows. CI validates links; a maintainer sanity-checks claims against rule 2 of `CONTRIBUTING.md` (every claim maps to a demonstrated behavior).
 
 A failed step is still a contribution: file an issue with the step, the tool called, and what came back.

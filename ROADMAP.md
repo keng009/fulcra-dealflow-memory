@@ -1,6 +1,6 @@
 # Roadmap
 
-Where this packet is headed, by theme. The [issue tracker](https://github.com/keng009/fulcra-dealflow-memory/issues) is the source of record — this page is the map, and every item links to its issue. Nothing here is a promise with a date; items gated on platform capabilities ship only when those are live (CONTRIBUTING rule 3).
+Where this packet is headed, by theme. The [issue tracker](https://github.com/keng009/fulcra-dealflow-memory/issues) is the source of record — this page is the map, and items link to their issues where one exists. Nothing here is a promise with a date; items gated on platform capabilities ship only when those are live (CONTRIBUTING rule 3).
 
 ## Now — prove it and release v0.3.0
 
@@ -16,7 +16,7 @@ The contract now qualifies tools by capability, not by name, with community prom
 
 ## Toward automatic — without losing consent
 
-- **Scheduled message-sweep digest** ([#38](https://github.com/keng009/fulcra-dealflow-memory/issues/38)): a recurring sweep of connected conversation sources presenting a one-yes Tend delta — "4 new threads, want them logged?"
+- **Scheduled message-sweep digest** ([#38](https://github.com/keng009/fulcra-dealflow-memory/issues/38)): the behavior is now specified in the full skill (Tend rule 5) — a recurring sweep presenting a one-yes Tend delta; what remains is the live scheduled run that promotes it from designed to tested.
 - **Zero-touch auto-commit** stays explicitly out of scope until it gets its own ADR: it changes the consent posture (ADR-0005) and will be a per-user opt-in decision, not a default.
 
 ## Team pipelines — shared memory across a partnership
