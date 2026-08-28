@@ -14,6 +14,7 @@ User-visible changes to the skill packet. Format follows [Keep a Changelog](http
 ### Added (2026-08-27, late)
 - **`message` channel** for DM/text-thread touchpoints, plus a messaging-capture registry (`references/messaging-capture.md`): paste-based capture from any app (WhatsApp, Telegram, Signal, iMessage/SMS, LinkedIn, Slack, …) with per-app format notes, and a capability-based connector tier for tools that can read conversations directly.
 - **CRM capability tiers and adapter registry** (`references/crm-sync.md`): Tier R (read — tracked-check + note import; HubSpot's official connector qualifies) vs Tier W (read/write — full sync), a five-slot tool-mapping format, and a 10-minute "Add your CRM" promotion protocol so anyone can bring their CRM.
+- **docs/why-fulcra.md**: what the skills use Fulcra for, the value, and the honestly drawn necessary-vs-convenient line (README links it).
 - **ADR-0007**: fulcra-raise-memory is a deliberate sibling product fork (founders-raising ICP, `/raise/` namespace); contracts diverge intentionally, engine fixes cherry-picked.
 
 ### Changed
