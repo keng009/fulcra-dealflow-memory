@@ -24,7 +24,7 @@ _Avoid_: structured record, annotation
 The custom Fulcra data type (proper noun) whose records are the typed records.
 
 **Channel**:
-How a touchpoint happened. Exactly one of: call, meeting, email, event, other.
+How a touchpoint happened. Exactly one of: call, meeting, email, event, message, other.
 
 ### The people
 

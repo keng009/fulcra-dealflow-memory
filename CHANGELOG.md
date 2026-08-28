@@ -11,6 +11,11 @@ User-visible changes to the skill packet. Format follows [Keep a Changelog](http
 - **Sourcing check** ("seen this company before?") and **Tend** (deltas, vetoes, queue rulings, staleness at scale per ADR-0006).
 - Demo runs snapshot-first (Path A) with conversational capture as fallback (Path B), and parks unsure items in the same review queue.
 
+### Added (2026-08-27, late)
+- **`message` channel** for DM/text-thread touchpoints, plus a messaging-capture registry (`references/messaging-capture.md`): paste-based capture from any app (WhatsApp, Telegram, Signal, iMessage/SMS, LinkedIn, Slack, …) with per-app format notes, and a capability-based connector tier for tools that can read conversations directly.
+- **CRM capability tiers and adapter registry** (`references/crm-sync.md`): Tier R (read — tracked-check + note import; HubSpot's official connector qualifies) vs Tier W (read/write — full sync), a five-slot tool-mapping format, and a 10-minute "Add your CRM" promotion protocol so anyone can bring their CRM.
+- **ADR-0007**: fulcra-raise-memory is a deliberate sibling product fork (founders-raising ICP, `/raise/` namespace); contracts diverge intentionally, engine fixes cherry-picked.
+
 ### Changed
 - **Breaking (key scheme)**: calendar-derived commit keys are now the source event's stable id — `touch:cal:<event-id>` — instead of person+date ordinals, so re-runs and same-day re-orderings cannot shift keys. Data written under the date-form scheme stays valid: commits cross-scan both key forms and confirm on any match.
 - Declined calendar events are skipped unless another source (transcript, CRM note) shows the meeting happened — sources beat RSVP status.

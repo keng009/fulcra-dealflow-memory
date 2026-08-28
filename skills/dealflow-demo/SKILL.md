@@ -66,7 +66,7 @@ Generate a read-only mini-snapshot of their last 30 days. The snapshot performs 
 Ask about a recent conversation with a founder — or, failing that, a co-investor or anyone else in their deal-flow network. At most five questions, and if they answer several at once — or paste notes — extract what you need and don't re-ask:
 
 1. Who was it with, and what company?
-2. How did you talk — call, meeting, email, event, or something else?
+2. How did you talk — call, meeting, email, event, a message thread, or something else?
 3. When was it?
 4. What was discussed — a few sentences?
 5. Any follow-ups you own?
@@ -162,7 +162,7 @@ Check the `get_data_catalog` result from step 2 for an existing **Dealflow Touch
 
 Then `record_data` one Dealflow Touchpoint. A MomentAnnotation record carries its structured payload as JSON in the record's note field. The payload fields:
 
-`{"dedupe_key","person","company","channel":"call|meeting|email|event|other","summary","stage_noted","follow_ups":[],"producer","evidence","recorded_at"}`
+`{"dedupe_key","person","company","channel":"call|meeting|email|event|message|other","summary","stage_noted","follow_ups":[],"producer","evidence","recorded_at"}`
 
 Schema example — fill every field from the touchpoint actually captured above (shown here filled with the sample touchpoint's values). `stage_noted` is optional: a deal-stage observation from what the user said, omitted entirely when they didn't indicate one — narrative only, never managed pipeline state:
 
@@ -181,7 +181,7 @@ Schema example — fill every field from the touchpoint actually captured above 
 }
 ```
 
-- `channel` is exactly one of: `call`, `meeting`, `email`, `event`, `other`.
+- `channel` is exactly one of: `call`, `meeting`, `email`, `event`, `message`, `other`.
 - `follow_ups` is an array of strings; an empty array when there are none.
 - `recorded_at` is now — when you are logging it, ISO-8601 with timezone.
 - The record's timestamp is when the touchpoint occurred — not when it was logged. If the user only gave a date, use 12:00 in their timezone.

@@ -74,7 +74,7 @@ The rules:
 - Creation: create-if-absent. Check `get_data_catalog` for an existing `Dealflow Touchpoint` type first; call `create_data_type` only if it is not there. Safe on re-runs.
 - Record payload: a MomentAnnotation record carries its structured payload as JSON in the record's note field. The payload fields:
 
-  `{"dedupe_key","person","company","channel":"call|meeting|email|event|other","summary","stage_noted","follow_ups":[],"producer","evidence","recorded_at"}`
+  `{"dedupe_key","person","company","channel":"call|meeting|email|event|message|other","summary","stage_noted","follow_ups":[],"producer","evidence","recorded_at"}`
 
   A filled example:
 
@@ -96,7 +96,7 @@ The rules:
 - `dedupe_key` is the touchpoint's key (formats above) — it is what the per-destination record scan matches on.
 - `company` is the company the person belongs to — a founder's startup or an investor's fund.
 - `stage_noted` is OPTIONAL — a deal-stage observation from what the user said, omitted entirely when they didn't indicate one. Suggested vocabulary: `sourced`, `evaluating`, `partner-meeting`, `term-sheet`, `passed`, `portfolio`; free text is allowed. It is narrative — an as-of-that-conversation observation, never managed pipeline state, and it is NEVER written to CRM stage or field values (the user's CRM remains the system of record for pipeline; see ADR-0004).
-- `channel` is exactly one of: `call`, `meeting`, `email`, `event`, `other`.
+- `channel` is exactly one of: `call`, `meeting`, `email`, `event`, `message`, `other`. `message` is a DM/text thread — WhatsApp, Telegram, Signal, iMessage, LinkedIn, Slack, SMS, or any other messaging app; capture guidance per app lives in `messaging-capture.md` (same folder).
 - `follow_ups` is an array of strings; an empty array when there are none.
 - `producer`, `evidence`, `recorded_at` are the provenance trio (see Provenance).
 - The record's timestamp is when the touchpoint occurred — not when it was logged. (`recorded_at` in the payload is when it was logged; the two differ whenever a touchpoint is logged after the fact.)
@@ -127,7 +127,7 @@ Every derived entry — relationship-file touchpoints, `### Earlier` digest line
 `[<producer> | <evidence> | <ISO-8601 timestamp with timezone>]`
 
 - `producer` — the skill that wrote it: `dealflow-demo` or `dealflow-memory`.
-- `evidence` — what the entry was derived from. Examples: `user account` (the user said it in conversation), `user account, calendar 2026-08-20` (a calendar event corroborates it), `otter transcript abc123` (a transcript source).
+- `evidence` — what the entry was derived from. Examples: `user account` (the user said it in conversation), `user account, calendar 2026-08-20` (a calendar event corroborates it), `otter transcript abc123` (a transcript source), `pasted whatsapp thread` (a message thread the user pasted — always names the app).
 - Timestamp — when the entry was written, ISO-8601 with timezone (e.g. `2026-08-20T17:30-04:00`).
 
 Agent conclusions are always represented as derived data carrying this suffix — never as source observations.

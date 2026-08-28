@@ -8,7 +8,8 @@ description: >-
 
 <!-- Trigger phrases: snapshot — "show me my last 30 days", "snapshot my deal flow";
      capture — "log my call/meeting with…", "I just got off a call with…", a pasted
-     block of meeting notes; sourcing — "seen this company before?", a pasted intro
+     block of meeting notes, a pasted WhatsApp/Telegram/LinkedIn/Slack message thread;
+     sourcing — "seen this company before?", a pasted intro
      or deck blurb; recall — "prep me for…", "what do I know about…"; reporting —
      "what moved this week/month", "who have I gone quiet on". Anything logged by
      dealflow-demo is picked up here with no migration; for a guided first-time demo
@@ -81,7 +82,7 @@ Rules: the `Stage noted:` line appears only when the user volunteered where the 
 
 A MomentAnnotation record carries its structured payload as JSON in the record's note field. The payload fields:
 
-`{"dedupe_key","person","company","channel":"call|meeting|email|event|other","summary","stage_noted","follow_ups":[],"producer","evidence","recorded_at"}`
+`{"dedupe_key","person","company","channel":"call|meeting|email|event|message|other","summary","stage_noted","follow_ups":[],"producer","evidence","recorded_at"}`
 
 A filled example:
 
@@ -103,7 +104,7 @@ A filled example:
 - `dedupe_key` is the touchpoint's key (formats above) — it is what the per-destination record scan matches on.
 - `company` is the company the person belongs to — a founder's startup or an investor's fund.
 - `stage_noted` is OPTIONAL — a deal-stage observation from what the user said, omitted entirely when they didn't indicate one. Suggested vocabulary: `sourced`, `evaluating`, `partner-meeting`, `term-sheet`, `passed`, `portfolio`; free text is allowed. Narrative only — never managed pipeline state, never written to CRM stages or fields.
-- `channel` is exactly one of: `call`, `meeting`, `email`, `event`, `other`.
+- `channel` is exactly one of: `call`, `meeting`, `email`, `event`, `message`, `other`.
 - `follow_ups` is an array of strings; an empty array when there are none.
 - The record's timestamp is when the touchpoint occurred — not when it was logged. (`recorded_at` in the payload is when it was logged; the two differ whenever a touchpoint is logged after the fact.)
 
@@ -215,9 +216,9 @@ One collective yes covers the batch (ADR-0005): every HIGH-CONFIDENCE draft the 
 
 ## Capture
 
-Trigger: "log my call with Jane", "log my meeting with the Acme founders", "I just got off a call with…", a pasted block of notes, or (Level 3) "log my meetings from this week".
+Trigger: "log my call with Jane", "log my meeting with the Acme founders", "I just got off a call with…", a pasted block of notes, a pasted message thread ("log this WhatsApp thread with Jane"), or (Level 3) "log my meetings from this week".
 
-1. **Gather the fields:** person, company, channel (exactly one of `call`, `meeting`, `email`, `event`, `other`), date the touchpoint occurred, a 2-5 sentence summary, and any follow-ups. If they volunteer where the deal stands ("they're raising a seed", "we passed"), capture it as `stage_noted` — never ask a dedicated question for it. Ask at most 5 questions, and only for what is missing. If the user pastes notes or a transcript, extract the fields from the paste and confirm them in a single message instead of asking questions. If no date is given, default to today in the user's timezone.
+1. **Gather the fields:** person, company, channel (exactly one of `call`, `meeting`, `email`, `event`, `message`, `other`), date the touchpoint occurred, a 2-5 sentence summary, and any follow-ups. If they volunteer where the deal stands ("they're raising a seed", "we passed"), capture it as `stage_noted` — never ask a dedicated question for it. Ask at most 5 questions, and only for what is missing. If the user pastes notes or a transcript, extract the fields from the paste and confirm them in a single message instead of asking questions. If the paste is a message thread from a messaging app (WhatsApp, Telegram, Signal, iMessage, LinkedIn, Slack, SMS, …), follow `references/messaging-capture.md`: channel `message`, one touchpoint per thread per day, evidence naming the app (`pasted whatsapp thread`), date from the thread's own timestamps where present. If no date is given anywhere, default to today in the user's timezone.
 
 2. **Corroborate (Level 2).** If calendar is connected, call `get_calendar_events` around the touchpoint date and look for a matching event (person's name or email among attendees, plausible time). If one matches, use the event's start time as the record timestamp and include `calendar <YYYY-MM-DD>` in the evidence, e.g. `user account, calendar 2026-08-20`. If nothing matches, proceed with what the user said and evidence `user account`.
 

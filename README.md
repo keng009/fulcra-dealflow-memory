@@ -58,7 +58,7 @@ The memory is the product; these two skills are just the first things built on i
 
 - *"Every evening, recap today's touchpoints and what I owe people"* — an end-of-day recap.
 - *"Each morning, brief me on today's meetings — pull my calendar and what my memory has on each person"* — a morning brief.
-- *"Log this"* with anything pasted from Telegram, Signal, or wherever your deal flow actually happens — channels no CRM integrates.
+- *"Log this"* with a thread pasted from WhatsApp, Telegram, Signal, iMessage, LinkedIn, or wherever your deal flow actually happens — channels no CRM integrates ([per-app guidance](skills/dealflow-memory/references/messaging-capture.md)).
 - Point a second assistant at the same account — your ChatGPT reads the same files Claude writes.
 
 None of these require changing the skills: the data contract is [documented](skills/dealflow-memory/references/conventions.md), and anything that can read your Fulcra account can build on it.

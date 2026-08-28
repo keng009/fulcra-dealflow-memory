@@ -41,10 +41,10 @@ const contract = read(CONTRACT);
 const demo = read(SKILLS[0]);
 const full = read(SKILLS[1]);
 const SHARED = [
-  ['payload signature', '`{"dedupe_key","person","company","channel":"call|meeting|email|event|other","summary","stage_noted","follow_ups":[],"producer","evidence","recorded_at"}`', [demo, full]],
+  ['payload signature', '`{"dedupe_key","person","company","channel":"call|meeting|email|event|message|other","summary","stage_noted","follow_ups":[],"producer","evidence","recorded_at"}`', [demo, full]],
   ["base key format", "`touch:<person-slug>:<YYYY-MM-DD>`", [demo, full]],
   ["provenance suffix format", "`[<producer> | <evidence> | <ISO-8601 timestamp with timezone>]`", [demo, full]],
-  ["channel enum", "`call`, `meeting`, `email`, `event`, `other`", [demo, full]],
+  ["channel enum", "`call`, `meeting`, `email`, `event`, `message`, `other`", [demo, full]],
   ["slug rule", "lowercase, hyphens, from person name (`jane-doe`); append company slug only when two people collide (`jane-doe-acme`)", [demo, full]],
   ["same-day ordinal", "-2", [demo, full]],
   ["stage-noted template line", "Stage noted:", [demo, full]],
@@ -79,6 +79,7 @@ const RAILS = [
   ["confidence tier (ambiguity parked)", "Never guessed", [full, contract]],
   ["veto tombstone list", "## Vetoed keys", [full, contract]],
   ["veto-set-first invariant", "Load the veto set first", [full, contract]],
+  ["messaging capture reference", "messaging-capture.md", [full, contract]],
   ["any-match-confirms rule", "already present in ANY representation", [full, contract]],
 ];
 for (const [label, needle, targets] of RAILS) {
