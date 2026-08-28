@@ -19,7 +19,7 @@ One guided session — about ten minutes once installed. The skill inspects your
 
 1. Create a Fulcra account at [fulcra.ai](https://fulcra.ai) if you don't have one. An empty account is fine — the demo works without prior data.
 2. In Claude, open **Customize → Connectors** and connect **Fulcra**.
-3. Download `dealflow-demo.zip` from the [latest release](https://github.com/keng009/fulcra-dealflow-memory/releases/latest) (or zip the `skills/dealflow-demo` folder yourself) and upload it in Claude under **Customize → Skills → + Create skill → Upload a skill**. If Skills isn't visible, enable it under **Settings → Capabilities** first.
+3. Download `dealflow-demo.zip` from the [latest release](https://github.com/keng009/fulcra-dealflow-memory/releases/latest) *(currently v0.2.0 — see the pre-release note above)* (or zip the `skills/dealflow-demo` folder yourself) and upload it in Claude under **Customize → Skills → + Create skill → Upload a skill**. If Skills isn't visible, enable it under **Settings → Capabilities** first.
 4. Start a new chat and say: **"run the Fulcra dealflow demo"**.
 
 ## Make it your workflow — `dealflow-memory`
@@ -27,7 +27,7 @@ One guided session — about ten minutes once installed. The skill inspects your
 The ongoing version: log conversations as they happen, prep before meetings, review the week by company, catch founders going quiet.
 
 1. Same Fulcra account and connector as above.
-2. Download `dealflow-memory.zip` from the [latest release](https://github.com/keng009/fulcra-dealflow-memory/releases/latest) (or zip the `skills/dealflow-memory` folder — its `references/` subfolder must travel inside the zip) and upload it the same way.
+2. Download `dealflow-memory.zip` from the [latest release](https://github.com/keng009/fulcra-dealflow-memory/releases/latest) *(currently v0.2.0 — see the pre-release note above)* (or zip the `skills/dealflow-memory` folder — its `references/` subfolder must travel inside the zip) and upload it the same way.
 3. Say **"show me my last 30 days"**, **"log my call with Jane"**, **"seen this company before?"**, **"prep me for tomorrow"**, **"what moved this week"**, or **"who have I gone quiet on"**.
 
 Only the Fulcra connector is required. If your Fulcra account has calendar data, the skill detects it and uses it: touchpoints get corroborated against real meetings, and "prep me for tomorrow" reads the actual calendar. If a transcript tool (Otter, Zoom, Fireflies) is connected, it can log meetings straight from transcripts. Nothing to configure — each session it states what it found and what connecting more would add.
@@ -40,7 +40,7 @@ Illustrative — the companies and counts reflect your actual month; with no sou
 
 > **You:** run the Fulcra dealflow demo
 >
-> **Claude:** Fulcra is connected, and I can see your calendar. One minute while I read your last 30 days… Here's your snapshot — **nothing is saved yet**: **Companies seen** — Acme Ventures (3 meetings), Northstar Robotics (2), Bluefin Bio (1). **People you're spending time on** — Jane Doe (Acme) and the Northstar founders. **Loose ends** — two meetings with no follow-up note anywhere. Want me to keep this as your memory? One yes saves the clear matches; anything I'm unsure about goes to a review queue, and the full skill can strike any saved item later.
+> **Claude:** Fulcra is connected, and I can see your calendar. One minute while I read your last 30 days… Here's your snapshot — **nothing is saved yet**: **Companies seen** — Acme Ventures (3 meetings), Northstar Robotics (2), Bluefin Bio (1). **People you're spending time on** — Jane Doe (Acme) and the Northstar founders. **Loose ends** — two meetings with no follow-up note anywhere. Here's the ledger of exactly what a yes saves — six lines, person/date/source/gist — and one item parked for review. Want me to keep this as your memory? One yes saves the clear matches; anything I'm unsure about goes to a review queue, and the full skill can strike any saved item later.
 >
 > **You:** Yes.
 >
@@ -99,7 +99,7 @@ Because memory that lives inside one chat product is a silo, and memory you can'
 
 ## Privacy
 
-These skills are instruction files: they add no backend of their own — no author-operated server, no telemetry, no analytics, and nothing that reports back to the authors. Your requests are still processed by Claude and by Fulcra's hosted service under their own terms and privacy policies. The skills write to exactly two places in your Fulcra account: files under the `/dealflow/` folder, and typed records in the account-level **Dealflow Touchpoint** data type they create — plus, only if you accept the offer, notes in your own CRM. Outside those they only read, and only what the features need: your data-catalog listing (to show you what your account holds), your calendar if connected (to corroborate touchpoints and prep tomorrow), and your timezone. If you accept CRM sync, they also search your CRM's contacts and read existing note titles to dedupe; if you log from a transcript tool, they read the transcripts you pick. They never write credentials, tokens, or secrets to any file, and they never send email or messages on your behalf: ask for a follow-up and you get a clearly labeled draft. File deletes in Fulcra are soft, so removing the demo's sample file is reversible; the sample typed record has no per-record delete through the connector — the demo tells you this **before** offering sample data — and its cleanup tombstones the sample's key, so the record sits inert and excluded from every report these skills produce.
+These skills are instruction files: they add no backend of their own — no author-operated server, no telemetry, no analytics, and nothing that reports back to the authors. Your requests are still processed by Claude and by Fulcra's hosted service under their own terms and privacy policies. The skills write to exactly two places in your Fulcra account: files under the `/dealflow/` folder, and typed records in the account-level **Dealflow Touchpoint** data type they create — plus, only if you accept the offer, notes in your own CRM. Outside those they only read, and only what the features need: your data-catalog listing (to show you what your account holds), your calendar if connected (to corroborate touchpoints and prep tomorrow), and your timezone. If you accept CRM sync, they also search your CRM's contacts and read existing note titles to dedupe; if you log from a transcript tool, they read the transcripts you pick. They never write credentials, tokens, or secrets to any file, and they never send email or messages on your behalf: ask for a follow-up and you get a clearly labeled draft. File deletes in Fulcra are soft, so removing the demo's sample file is reversible; the sample typed record has no per-record delete through the connector — the demo tells you this **before** offering sample data — and its cleanup tombstones the sample's key, so the record sits inert and excluded from every read these skills perform.
 
 ---
 

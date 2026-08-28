@@ -6,7 +6,7 @@ CRM involvement is optional and detected, never required. If no CRM tools are co
 
 ## Capability tiers — a CRM qualifies by what its tools can do, not by name
 
-Map whatever CRM tools are connected onto six capability slots (5 and 6 are optional):
+Map whatever CRM tools are connected onto seven capability slots (5–7 are optional):
 
 | Slot | Capability | Needed for |
 |---|---|---|
@@ -16,6 +16,7 @@ Map whatever CRM tools are connected onto six capability slots (5 and 6 are opti
 | 4 | Create a note on a contact | One-way sync |
 | 5 | Create a task linked to a contact (optional) | Follow-ups as tasks |
 | 6 | Associate a note with additional objects — deal/company/ticket (optional) | Note placement where the CRM's users actually look |
+| 7 | Delete a note (optional, rare) | Veto cleanup of an already-synced copy — where absent, the veto gives the manual step |
 
 - **Tier R (slots 1–3, read-only)**: powers the snapshot's tracked-vs-untracked check and CRM-note import into memory. A Tier R CRM is a full read source — never offer sync for it. Example: HubSpot's official Claude connector.
 - **Tier W (slots 1–4, +5 where present)**: everything above plus one-way sync (notes, optional tasks).
@@ -65,6 +66,7 @@ Tested against a live Attio workspace via the official Attio connector (write pa
 | Read a note body | `get-note-body` |
 | Create a note | `create-note` (person record as parent) |
 | Create a task | `create-task` (linked to the contact) |
+| Delete a note | none — removal is manual in the Attio UI (the veto says exactly which note) |
 
 - **Contact lookup**: search people records by email, then by name (connector tool: `search-records` on the people object, or the equivalent contact-search tool your connector exposes).
 - **Idempotency mechanics**: Attio notes have **no custom fields**, so there is nowhere structured to put an idempotency key. The key therefore lives in two plain-text places: the note **title suffix** (`[touch:jane-doe:2026-08-20]`) and the **`Source:` body line**. The dedupe check is the title: before writing, list the matched person record's existing notes (`search-notes-by-metadata` filtered to that record, or the equivalent) and scan each title for the exact key string. Found → skip, tell the user. Not found → write.

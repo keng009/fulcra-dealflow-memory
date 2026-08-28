@@ -96,10 +96,16 @@ Committing touchpoints from past activity (calendar, transcripts, CRM notes) rat
 The "seen this company before?" lookup at intro time: direct hits, the user's own past judgment, labeled inferences, and a read-only CRM presence check. A read; never writes.
 
 **Tend**:
-The ongoing mode after commit: small deltas offered in one line, vetoes honored immediately, the review queue surfaced occasionally — seconds per day, never a project.
+The ongoing mode after commit: small deltas offered in one line (including the opt-in scheduled sweep, cursored by watermarks), vetoes honored immediately, the review queue surfaced occasionally — seconds per day, never a project.
 
 **Veto**:
-The user striking a stored touchpoint ("that one's wrong"). The file entry is removed (versioned edit); because typed records have no per-record delete, the dedupe key goes on `handoff.md`'s `## Vetoed keys` list — the tombstone every read excludes and no commit re-imports.
+The user striking a stored touchpoint ("that one's wrong"). The file entry is removed (versioned edit); because typed records have no per-record delete, the dedupe key goes on `handoff.md`'s `## Vetoed keys` list — the tombstone every read these skills perform excludes and no commit re-imports (readers outside the skills must apply the list themselves).
+
+**Commit ledger**:
+The itemized list shown immediately before the one collective yes — one line per draft (person, date, source, one-line gist), split into Will save and Parked for review. What makes ADR-0005's "read exactly what will be saved" literal.
+
+**Sweep watermark**:
+The per-source cursor in `handoff.md` (`## Sweep watermarks`) that a scheduled sweep reads and advances — only after its digest is fully resolved — so repeated sweeps never rediscover the same messages.
 
 ### The packet
 

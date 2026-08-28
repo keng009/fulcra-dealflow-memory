@@ -13,7 +13,7 @@ The shared data contract for the `dealflow-demo` and `dealflow-memory` skills: w
 | `/dealflow/README.md` | What this folder is, which skills write to it, a pointer to these conventions, and the no-credentials rule: no credentials, tokens, or secrets are ever written to any file in this folder. |
 | `/dealflow/INDEX.md` | One line per file in the folder. Read at bootstrap; updated whenever a file is added. |
 | `/dealflow/relationships/<slug>.md` | One narrative file per person (founder, fund partner, LP, co-investor). Dated touchpoint entries, newest first. |
-| `/dealflow/handoff.md` | Durable handoff: open follow-ups, pending intros, next actions — plus the `## Vetoed keys` list (dedupe keys the user has vetoed; every read these skills perform excludes them, and no commit re-imports them; needed because typed records have no per-record delete — readers outside these skills must apply the list themselves) and the `## Sweep watermarks` list (one line per swept source: `- <source>: <ISO-8601 of last completed sweep>`; advanced only after a sweep's digest is fully resolved). |
+| `/dealflow/handoff.md` | Durable handoff: open follow-ups, pending intros, next actions — plus the `## Vetoed keys` list (dedupe keys the user has vetoed; every read these skills perform excludes them, and no commit re-imports them; needed because typed records have no per-record delete — readers outside these skills must apply the list themselves) and the `## Sweep watermarks` list (one line per swept source: `- <source>: <ISO-8601 of last completed sweep>`; advanced only after a sweep's digest is fully resolved; an interrupted or failed sweep leaves it unmoved, and parked items are never re-offered). |
 | `/dealflow/review-queue.md` | Ambiguous items from commits/backfill parked for the user's judgment, each with its evidence. Skills append; the user (or the user via any assistant) clears. Never written to any other store while queued. |
 
 ## Relationship file format
@@ -114,7 +114,7 @@ The snapshot is an on-the-fly analysis of the user's recent deal flow (default: 
 
 ## Commit, confidence, and backfill hygiene
 
-A snapshot (or deeper backfill) becomes stored memory only on the user's explicit consent — one collective yes covers the batch (ADR-0005): every item just shown as a draft is written per the dual-write rules, and a commit summary listing everything written is mandatory output. Confidence gates what the yes covers:
+A snapshot (or deeper backfill) becomes stored memory only on the user's explicit consent — one collective yes covers the batch (ADR-0005). The yes is always preceded by a commit ledger — one line per draft (`Person — date — source — one-line gist`), split into **Will save** and **Parked for review** — whether the batch came from a snapshot or a direct backfill. Every item just shown as a draft is written per the dual-write rules, and a commit summary listing everything written is mandatory output. Confidence gates what the yes covers:
 
 - **High confidence** — unambiguous person/company match with real content → written on the batch yes.
 - **Ambiguous** — multiple candidates, no candidate, or unclear relevance → appended to `review-queue.md` with its evidence, and written nowhere else until the user rules on it. Never guessed.

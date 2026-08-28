@@ -83,6 +83,9 @@ const RAILS = [
   ["messaging capture reference", "messaging-capture.md", [full, contract]],
   ["messaging-thread key form", "-thread:<id>", [full, contract]],
   ["any-match-confirms rule", "already present in ANY representation", [full, contract]],
+  ["sweep watermarks", "## Sweep watermarks", [full, contract]],
+  ["commit ledger", "Parked for review", [demo, full, contract]],
+  ["read scoping", "every read these skills perform", [demo, full, contract]],
 ];
 for (const [label, needle, targets] of RAILS) {
   const before = failures;

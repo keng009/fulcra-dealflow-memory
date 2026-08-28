@@ -21,6 +21,12 @@ User-visible changes to the skill packet. Format follows [Keep a Changelog](http
 - **CRM slot 6 (note placement)**: notes may also associate to existing deal/company objects where the CRM supports it — designed, untested; never creates or edits objects.
 - **ADR-0007**: fulcra-raise-memory is a deliberate sibling product fork (founders-raising ICP, `/raise/` namespace); contracts diverge intentionally, engine fixes cherry-picked.
 
+### Added (2026-08-28, review round 5)
+- **Commit ledger**: every one-yes commit (snapshot or direct backfill) is preceded by an itemized ledger — person/date/source/gist, Will save vs Parked — making ADR-0005's consent literal.
+- **Sweep watermarks**: per-source cursors in `handoff.md` with advance-on-resolution and failure-safe rules, so scheduled sweeps never rediscover the same messages.
+- **Three-part sample cleanup**: the demo's cleanup soft-deletes the sample file, updates INDEX, and tombstones the sample key so sample data can never surface in reports.
+- Per-destination veto disclosure (incl. the exact manual CRM deletion step); `get_user_info` in both preflights; delete-capability slot 7 in the CRM registry; "excluded from every read" scoped to these skills everywhere, with third-party readers told to apply the veto list.
+
 ### Changed
 - **Breaking (key scheme)**: calendar-derived commit keys are now the source event's stable id — `touch:cal:<event-id>` — instead of person+date ordinals, so re-runs and same-day re-orderings cannot shift keys. Data written under the date-form scheme stays valid: commits cross-scan both key forms and confirm on any match.
 - Declined calendar events are skipped unless another source (transcript, CRM note) shows the meeting happened — sources beat RSVP status.
