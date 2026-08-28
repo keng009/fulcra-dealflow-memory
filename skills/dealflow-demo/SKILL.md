@@ -33,7 +33,7 @@ Pace: steps 1–2 about two minutes, step 3 about five, steps 4–5 the rest. Sh
 
 ## 1. Preflight
 
-Check whether the Fulcra tools are available in this session: `get_data_catalog`, `list_files`, `read_file`, `write_file`, `create_data_type`, `record_data`, `get_records`.
+Check whether the Fulcra tools are available in this session: `get_data_catalog`, `get_user_info`, `list_files`, `read_file`, `write_file`, `create_data_type`, `record_data`, `get_records`.
 
 If they are not, stop the demo entirely and say:
 
@@ -57,7 +57,7 @@ Generate a read-only mini-snapshot of their last 30 days. The snapshot performs 
 
 1. Sweep the calendar window in weekly chunks (never one giant query); with a transcript tool, list the window's transcripts too.
 2. Keep meetings with external attendees; group by company via attendee email domains and names; drop solo blocks, declined events (unless another source shows the meeting actually happened — sources beat RSVP status), and personal noise.
-3. Present it compactly: **Companies seen** (with counts), **People you're spending time on**, **Loose ends** (meetings with no follow-up trace), and — transcripts permitting — a couple of one-line what-was-said highlights. A few sentences of framing, not a report: this was generated from their own month, before anything was stored.
+3. Present it compactly: **Companies seen** (with counts), **People you're spending time on**, **Loose ends** (meetings with no follow-up trace), and — transcripts permitting — a couple of one-line what-was-said highlights. End with the commit ledger: one line per item (`Person — date — source — one-line gist`), split into **Will save** and **Parked for review** — the yes covers exactly these lines and nothing else. A few sentences of framing, not a report: this was generated from their own month, before anything was stored.
 4. Offer the save: "Want me to keep this as your memory? One yes saves the clear matches — files are versioned, and the full dealflow-memory skill adds a veto that can strike any saved item later (struck items are excluded from every read; the records themselves have no per-record delete and stay stored). Anything I'm unsure about gets parked in a review queue, not guessed." On yes: write the clearly-matched touchpoints using the formats below — creating the folder files and the data type first as needed, calendar-derived keys as `touch:cal:<event-id>` (the event's stable id, so a re-run reproduces the same keys), backfill entries carrying `evidence` that names the source exactly (`calendar backfill`) and creating no open follow-ups. Park each unsure item as a row in `/dealflow/review-queue.md` (create it per the folder-files section if absent). Then give a one-line commit summary — who was saved, what was parked and why — and go to the payoff using the most interesting saved person.
 5. On no, or if the snapshot looks thin: fall through to Path B with one touchpoint of their choosing — the demo still works.
 
@@ -71,7 +71,7 @@ Ask about a recent conversation with a founder — or, failing that, a co-invest
 4. What was discussed — a few sentences?
 5. Any follow-ups you own?
 
-If they have nothing to log, offer the sample touchpoint and say clearly that it is sample data — including, BEFORE they agree: the sample file can be deleted afterward (a soft delete), but the sample typed record has no per-record delete through this connector and will simply sit inert in their account, labeled as sample. The sample: person **Jane Doe**, company **Acme Ventures** (GP), channel `call`, dated yesterday, summary "Sample: intro call covering Acme's fund focus and a possible seed co-invest; Jane offered to share their diligence checklist.", stage noted `evaluating` (volunteered), follow-up "Send Jane the deck (sample)". In the file, its Context line must read: `Sample contact created by the dealflow-demo skill — not a real person. Delete freely.`
+If they have nothing to log, offer the sample touchpoint and say clearly that it is sample data — including, BEFORE they agree: the sample file can be deleted afterward (a soft delete), but the sample typed record has no per-record delete through this connector — cleanup tombstones its key instead, so it sits inert AND excluded from every read these skills perform. The sample: person **Jane Doe**, company **Acme Ventures** (GP), channel `call`, dated yesterday, summary "Sample: intro call covering Acme's fund focus and a possible seed co-invest; Jane offered to share their diligence checklist.", stage noted `evaluating` (volunteered), follow-up "Send Jane the deck (sample)". In the file, its Context line must read: `Sample contact created by the dealflow-demo skill — not a real person. Delete freely.`
 
 Sample re-run rule: because the sample is dated relative to today, its exact key changes between days — so for the sample touchpoint, the dedupe scan matches ANY existing `touch:jane-doe:` key or the sample Context marker line, not just today's key. A re-run must never add a second sample block.
 
@@ -208,4 +208,4 @@ Close in a few lines, no push:
 - This persisted — the file and the record stay in their account after this chat ends.
 - The **dealflow-memory** skill uses the same folder and the same formats, so today's touchpoint carries over as-is, zero migration. It adds daily capture ("log my call with …"), meeting prep ("prep me for …"), weekly reporting ("what moved this week"), stale-relationship alerts, calendar awareness, and optional one-way CRM sync.
 - To install it: same steps as this skill, with the `dealflow-memory` folder.
-- If they logged the sample touchpoint, offer to delete the sample relationship file (`delete_file` — a soft delete, reversible). Be straight about the other half: the sample typed record has no per-record delete through this connector, so it simply sits inert in their account, clearly labeled as sample data.
+- If they logged the sample touchpoint, offer cleanup — three parts, narrated plainly: (1) soft-delete the sample relationship file (`delete_file`, reversible) and remove its `INDEX.md` line; (2) the sample typed record has no per-record delete through this connector, so (3) tombstone it — create `/dealflow/handoff.md` from the full skill's template if it doesn't exist and add the sample's key under `## Vetoed keys` — which leaves the record stored but excluded from every read these skills perform. Without the tombstone, sample data would surface in future reports; with it, it cannot.

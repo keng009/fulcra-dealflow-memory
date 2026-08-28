@@ -7,7 +7,7 @@ User-visible changes to the skill packet. Format follows [Keep a Changelog](http
 ### Added
 - **Snapshot**: read-only analysis of the last 30 days of deal flow (calendar on either surface — Fulcra or a Claude-side connector — plus transcripts and a read-only CRM check), shown before anything is stored. The snapshot performs zero writes.
 - **Commit**: one collective yes converts the snapshot to stored memory (ADR-0005); ambiguous items are parked in `/dealflow/review-queue.md` with their evidence, never guessed; per-item review always available.
-- **Veto tombstone**: typed records have no per-record delete, so a vetoed touchpoint's key goes on `handoff.md`'s `## Vetoed keys` list — every read (Recall, Report, Sourcing) excludes it and no commit re-imports it.
+- **Veto tombstone**: typed records have no per-record delete, so a vetoed touchpoint's key goes on `handoff.md`'s `## Vetoed keys` list — every read these skills perform (Recall, Report, Sourcing) excludes it and no commit re-imports it; readers outside the skills must apply the list themselves.
 - **Sourcing check** ("seen this company before?") and **Tend** (deltas, vetoes, queue rulings, staleness at scale per ADR-0006).
 - Demo runs snapshot-first (Path A) with conversational capture as fallback (Path B), and parks unsure items in the same review queue.
 
