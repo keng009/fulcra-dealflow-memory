@@ -2,6 +2,15 @@
 
 Two Claude skills that give your deal flow a memory, on your own [Fulcra](https://fulcra.ai) account. Fulcra is a personal context platform: your account holds your data — calendars, files, custom records — and any AI assistant you connect to it over MCP reads and writes that same account. Each touchpoint you log — a founder conversation from first intro onward, a co-investor call, anyone in your network — is stored twice: a narrative entry you can read, and a typed record software can query. From there: sourcing recall ("what do I know about this company?"), prep before the partner meeting ("prep me for Jane"), momentum review ("what moved this week", grouped by company with stage changes per your notes), and a list of founders going quiet (45+ days). Optional one-way copy into your CRM. Because the memory lives in your account rather than inside any one chat product, it persists across sessions and across assistants.
 
+## Which skill do I install?
+
+| You want | Install | Commitment |
+|---|---|---|
+| A zero-commitment look — see the flow on your own month (or sample data), decide after | **`dealflow-demo`** | ~10 minutes; works on an empty account; nothing written until you say yes |
+| The product — ongoing capture, prep, weekly reports, going-quiet alerts, CRM sync | **`dealflow-memory`** | The daily workflow; picks up anything the demo stored, no migration |
+
+Start with the demo if you're deciding; start with `dealflow-memory` if you're already sold. Both write the same formats to the same folder.
+
 ## See it in 10 minutes — `dealflow-demo`
 
 One guided session — about ten minutes once installed. The skill inspects your Fulcra data catalog, builds a **read-only snapshot of your last 30 days of deal flow** from whatever you've connected (calendar, meeting tools), saves it as memory on a single yes — files versioned; the full skill adds a veto flow that can strike any saved item later — and generates a prep brief from what it just stored. Nothing is written until you say so; with no sources connected, it falls back to capturing one touchpoint conversationally. Think of it as the hello-world; `dealflow-memory` below is the product.

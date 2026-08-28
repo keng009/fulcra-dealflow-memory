@@ -15,6 +15,7 @@ Map whatever CRM tools are connected onto five capability slots:
 | 3 | Read a note's body | CRM-note import (`touch:<crm>-note:<id>` keys) |
 | 4 | Create a note on a contact | One-way sync |
 | 5 | Create a task linked to a contact (optional) | Follow-ups as tasks |
+| 6 | Associate a note with additional objects — deal/company/ticket (optional) | Note placement where the CRM's users actually look |
 
 - **Tier R (slots 1–3, read-only)**: powers the snapshot's tracked-vs-untracked check and CRM-note import into memory. A Tier R CRM is a full read source — never offer sync for it. Example: HubSpot's official Claude connector.
 - **Tier W (slots 1–4, +5 where present)**: everything above plus one-way sync (notes, optional tasks).
@@ -50,6 +51,8 @@ A CRM not named in this file still works if its connector fills the slots — fo
   Write `Follow-ups: none` when there are none. The `Source:` line is the provenance trio from `conventions.md` (producer | evidence | timestamp) and marks the note as written by this skill, not by a human.
 
 - **Follow-ups as tasks**: where the CRM supports tasks linked to a contact, offer to create one task per follow-up (content = the follow-up text) in the same pass as the note. Tasks are only ever created alongside a new note write — when the dedupe scan skips the note, it skips the tasks too, so tasks need no key of their own.
+
+- **Note placement (slot 6 — optional, designed, untested)**: where the CRM's note primitive supports additional parents or associations (HubSpot notes associate with deals/companies/tickets; Attio notes can parent on company or deal-list records; Affinity notes on organizations/opportunities), the note MAY also be associated to the most relevant *existing* deal/opportunity/company object, using that CRM's own terminology. Which object is relevant is asked when ambiguous, never guessed (park in the review queue if unclear). Associating a note is not editing the object: fields, stages, amounts, and owners remain untouched (ADR-0004), and nothing is ever created to have somewhere to put the note.
 
 ## Attio (Tier W — tested)
 

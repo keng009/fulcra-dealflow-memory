@@ -297,6 +297,7 @@ After a commit exists, ongoing upkeep arrives as small deltas, never projects:
 2. **Vetoes.** "That one's wrong / remove it" → remove the entry from the relationship file (versioned edit), add its dedupe key to the `## Vetoed keys` list in `handoff.md` — typed records have no per-record delete, so this list is the tombstone every read honors: Recall, Report, and Sourcing checks exclude payloads whose `dedupe_key` appears on it, and no commit re-imports one — and clear any queue entry. Say exactly what was removed.
 3. **The queue, occasionally.** When the user seems to have a spare moment (never mid-task), surface the review queue count once: "3 items parked for your judgment whenever you want them." Process rulings immediately; each ruling either writes the item properly or drops it.
 4. **Staleness at scale.** Computing "going quiet" never requires reading every relationship file: one windowed `get_records` call gives the active set; going-quiet = INDEX entries minus that set (ADR-0006 access rules).
+5. **Scheduled sweep (opt-in).** When the user has set up a recurring session (a scheduled task), it runs the Deltas rule at schedule: check each connected conversation source (transcripts, messaging tools per `references/messaging-capture.md`, CRM notes) for activity since the last sweep, and present ONE digest line — "4 new threads since yesterday — want them logged?" One yes commits per the standard rules; ambiguity parks; nothing is ever written without the yes. A sweep is Tend at a schedule, not a new consent model.
 
 ## Rails
 
