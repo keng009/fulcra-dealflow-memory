@@ -2,6 +2,8 @@
 
 Two Claude skills that give your deal flow a memory, on your own [Fulcra](https://fulcra.ai) account. Fulcra is a personal context platform: your account holds your data — calendars, files, custom records — and any AI assistant you connect to it over MCP reads and writes that same account. Each touchpoint you log — a founder conversation from first intro onward, a co-investor call, anyone in your network — is stored twice: a narrative entry you can read, and a typed record software can query. From there: sourcing recall ("what do I know about this company?"), prep before the partner meeting ("prep me for Jane"), momentum review ("what moved this week", grouped by company with stage changes per your notes), and a list of founders going quiet (45+ days). Optional one-way copy into your CRM. Because the memory lives in your account rather than inside any one chat product, it persists across sessions and across assistants.
 
+**Sibling packets**: [fulcra-raise-memory](https://github.com/keng009/fulcra-raise-memory) (founders raising) and [fulcra-sales-memory](https://github.com/keng009/fulcra-sales-memory) (founders selling their own product) are the same engine flavored for the other sides of the table. All three can run on one account (disjoint `/dealflow/`, `/raise/`, and `/sales/` namespaces). See [ADR-0007](docs/adr/0007-sibling-product-fork.md).
+
 ## Which skill do I install?
 
 | You want | Install | Commitment |
