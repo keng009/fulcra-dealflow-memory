@@ -1,0 +1,7 @@
+# One collective yes commits the snapshot (batch consent)
+
+The snapshot-first flow shows the investor a read-only analysis of their recent deal flow, then converts it into stored memory on a single "save this" confirmation — rather than confirming each touchpoint individually. This deliberately loosens the confirm-per-item posture, and it is honest for three reasons together: consent is explicit and informed (they just read exactly what will be saved), every write is dedupe-keyed and idempotent, and every item is revocable (versioned, soft-deletable files; typed records are tombstoned on veto — excluded from every read these skills perform, though the record itself remains stored, since the platform has no per-record delete) with a full commit summary listed afterward. Per-item review remains available — it is simply never the gate. Ambiguous items are never covered by the batch yes: they go to the review queue, unwritten.
+
+**Status**: accepted (2026-08-26, Nick). Amended 2026-08-28: "everything is reversible" corrected to the precise revocability terms above, after external review flagged that typed records cannot be individually deleted — only tombstoned and excluded from reads.
+
+**Consequences**: the revocability guarantee becomes load-bearing (every read path must honor the vetoed-keys list, and nothing in the commit path may write anywhere a veto cannot reach); the commit summary is mandatory output, not politeness; if a future storage target can neither soft-delete nor be reliably excluded on read, batch consent does not extend to it.

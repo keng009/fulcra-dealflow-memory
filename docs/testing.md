@@ -46,6 +46,93 @@ Folder initialization (README/INDEX templates) was covered by the 2026-08-20 pas
 
 **Still untested**: an ambiguous CRM contact match (skip-and-say-so), and the demo skill run through Claude's actual zip-upload UI end-to-end — the latter is a human step (upload, say "run the Fulcra dealflow demo", complete a session) and should be done once before any investor walkthrough.
 
+## 2026-08-27 — Snapshot READ side, live against a real month (Claude Google Calendar connector)
+
+| Test | Result |
+|---|---|
+| Weekly-chunk sweep of a real calendar week (18 events) | Pass — attendee emails, organizers, RSVP status all present |
+| Deal-flow identification on real data | Pass — external meetings correctly separable from travel blocks, holds, solo tasks, personal events |
+| Findings folded back into the contract | Declined-events rule added (skip unless a transcript/CRM note shows the meeting happened — sources beat RSVP); attendee-less named meetings confirmed as ambiguous-tier, not evidence |
+
+Zero writes performed — consistent with the snapshot's own rail. The commit/veto write mechanics reuse the API paths proven in the 2026-08-20 and 2026-08-26 passes (dual write, ordinals, self-healing, note creation, title scans); the new v3 pieces (review-queue file, CRM-origin keys, circularity guard) are prose rules over those same proven calls.
+
+## 2026-08-27 — Snapshot → Commit → Veto, live end-to-end (Claude GCal + Otter + Attio read + official Fulcra connector)
+
+Full flow run on the maintainer's real accounts against a fresh `/dealflow/` namespace. This was the v0.3.0 gate.
+
+| Step | Result |
+|---|---|
+| 30-day snapshot sweep, weekly chunks, dual-surface calendar (Fulcra-native absent → Claude GCal connector) | Pass — ~30 deal-flow candidate events surfaced from a real month |
+| Going-quiet ~60-day headline extension (new rule) | Pass — 3 extra weekly chunks; 9 quiet July threads surfaced that a 30-day window could not see |
+| Declined-events rule on real data | Pass both directions — one declined event with a transcript proving it happened was KEPT (sources beat RSVP); one declined event with no source was dropped |
+| Transcript enrichment (Level 3) | Pass — 7 of the kept touchpoints carried Otter summaries; keys minted as `touch:<transcript-id>` |
+| CRM read-only tracked-check | Pass — 8 sampled counterparts all present in Attio, every one auto-created by sync (no narrative anywhere), zero CRM writes |
+| Zero writes before consent | Pass — entire snapshot + enrichment performed no writes |
+| One collective yes, with a user exclusion | Pass — user approved the batch minus one named thread; that thread was excluded before any write (17 committed of 18 shown) |
+| Batch commit | Pass — folder files (README/INDEX/handoff incl. `## Vetoed keys`/review-queue), type create-if-absent, 17 relationship files + 17 typed records, mixed calendar-derived and transcript-derived keys |
+| Backfill hygiene | Pass — zero open follow-ups created; every `evidence` names its exact source (`calendar backfill <date>` / `otter transcript <id>`) |
+| Review-queue parking | Pass — 3 ambiguous items (attendee-less named meeting; two no-summary transcripts) parked with evidence, written nowhere else |
+| Read-back | Pass — all 17 payloads round-trip intact via `get_records`; no read lag observed |
+| Veto → tombstone | Pass — one committed touchpoint vetoed: relationship file soft-deleted, INDEX line removed, key added to `## Vetoed keys`; the typed record remains (no per-record delete) but the exclusion filter drops it from reads (16 of 17 surface) |
+
+### 2026-08-27 addendum — key-scheme change + re-run and veto-read tests (post external review)
+
+External review flagged that ordinal-by-event-order calendar keys are not stable (adding/removing an earlier same-day event could shift them). Calendar-derived commit keys moved to the stable per-source form `touch:cal:<event-id>` with a person+date cross-scan (a match on either key form means confirm, not assume). The live run above predates this and wrote date-form keys — still valid standard keys, which is exactly what the cross-scan exists to catch.
+
+| Test | Result |
+|---|---|
+| Commit re-run over the same window (dedupe side) | Pass — re-derived the same batch against the live store: all 7 transcript keys matched directly; every calendar item's cross-scan found the person's date-form key (spot-checked live in file text), resolving confirm → same conversation → skip; zero writes issued |
+| Vetoed key on commit re-run | Pass — the vetoed item was excluded from re-import by the `## Vetoed keys` list (read live from handoff.md) |
+| Veto → Sourcing check | Pass — after the read-path fix (Sourcing now loads the vetoed-keys filter), a sourcing check on the vetoed thread returns "no history": no INDEX hit, record present but excluded |
+
+**2026-08-27, later: the `touch:cal:<event-id>` write path live test (#34)** — run on one real, previously unstored calendar touchpoint with the user's explicit consent (ADR-0005):
+
+| Test | Result |
+|---|---|
+| Connected calendar exposes a stable event id | Pass — the same event fetched twice, ~1 hour apart, returned a byte-identical id |
+| Veto-set-first + dual-store pre-write scan (both key forms) | Pass — veto list loaded (no match), file and record stores both clean for the event id and the person's date-form family |
+| First commit under `touch:cal:<event-id>` | Pass — file heading carries the key; payload round-trips intact via `get_records`; no read lag |
+| Second commit of the same event | Pass — the fresh dual-store scan matched the `touch:cal:` key itself (not the cross-scan) in both representations → skip; **zero writes** |
+
+(A transient connector 401 interrupted the first attempt mid-scan, before any write — after reconnecting, state was verified unchanged and the run completed. The lag-guard posture held: no failure was declared on a recoverable read.)
+
+**2026-08-27, later still — CRM-note-origin import + circularity guard (#29), live against Attio:**
+
+| Test | Result |
+|---|---|
+| Import a pre-existing CRM note (no key in title) | Pass — dual write keyed `touch:attio-note:<note-id>`, payload round-trips; entry inserted newest-first into an existing relationship file |
+| Import re-run | Pass — note's key found in the record store, zero imports |
+| Sync write per the crm-sync note format (title ends with the touchpoint key) | Pass — created after a title-scan dedupe |
+| Circularity guard on the next import sweep | Pass — the sync-written note (title carries `[touch:`) was refused as this system's own output; zero imports overall |
+
+**2026-08-27, later still — injected partial failures under v3 (#30):**
+
+| Test | Result |
+|---|---|
+| File-only half-write (record deliberately skipped) → retry | Pass — per-destination scan found file-yes/record-no; heal wrote ONLY the record; window read-back shows exactly one record, file untouched |
+| Record-only half-write (file deliberately skipped) → retry | Pass — scan found record-yes/file-no; heal wrote ONLY the file (+ INDEX line); no second record |
+
+(The demo's per-destination scan follows the same mechanics exercised here; running it inside Claude's actual skill UI remains part of the #31 journey.)
+
+Still untested from this flow: the release-ZIP upload journey end to end (#31 — human step, required before any investor walkthrough); the sweep's *scheduled* trigger (#38 — the sweep mechanics themselves were live-tested 2026-08-28, below); CRM note-placement slot 6 (#39); the messaging browser-observation and connector tiers (#37/#44).
+
+## 2026-08-28 — First live sweep (Tend rule 5 mechanics, #38) — manually triggered
+
+Run on the maintainer's real accounts against the live `/dealflow/` store (21 touchpoints, 1 veto, 3 parked items). Manually triggered — the scheduled-trigger variant is the remaining #38 residual; the mechanics below are what a scheduled run executes.
+
+| Test | Result |
+|---|---|
+| First-run rule: no `## Sweep watermarks` section in handoff.md → bounded default window used and stated | Pass |
+| Three sources swept: calendar (Claude GCal connector), transcripts (Otter), CRM notes (Attio, by created-after) | Pass |
+| Noise + internal filtering on real data | Pass — colleague meetings, sub-minute transcript fragments, and scheduler-generated travel/hold blocks all excluded |
+| Park-once: previously parked items (an attendee-less named meeting; a no-summary transcript) re-surfaced by the source reads | Pass — recognized in `review-queue.md`, not re-offered |
+| Circularity guard: the skill's own sync note (title carries `[touch:`) returned by the CRM created-after read | Pass — refused as this system's output |
+| Already-imported CRM note (its `touch:<crm>-note:<id>` key already stored) | Pass — skipped, zero writes |
+| Cross-key duplicate detection: CRM notes written by a *different* automation, whose titles carry a transcript id already stored as a `touch:<transcript-id>` key | Pass — recognized as the same conversation, not imported under a second key |
+| New ambiguous item (attendee-less named calendar event) | Pass — parked in `review-queue.md` with evidence, written nowhere else |
+| Digest resolution with zero commit candidates | Pass — no consent prompt needed (nothing to store), parked items are the resolution |
+| Failure-safe ordering: watermark write performed last, only after full resolution | Pass — `## Sweep watermarks` created with one ISO-8601 line per source; read back intact alongside `## Vetoed keys` |
+
 ## Untested surfaces (labeled accordingly in-product)
 
 HubSpot (official connector is read-only — sync requires a write-capable MCP server, untested), Notion (official connector read/write, block-append scope untested), Affinity (official connector read/write, untested). See issues #4 and #5.

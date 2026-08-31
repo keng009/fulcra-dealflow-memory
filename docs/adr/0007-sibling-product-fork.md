@@ -1,0 +1,9 @@
+# The sibling packets are deliberate product forks, not a shared library
+
+This packet serves investors managing deal flow. Its siblings serve different ICPs with different vocabularies and, over time, different features: [fulcra-raise-memory](https://github.com/keng009/fulcra-raise-memory) (founders actively raising — "investors going cold"; derived 2026-08-27) and [fulcra-sales-memory](https://github.com/keng009/fulcra-sales-memory) (founders selling their own product — "leads going cold"; derived 2026-08-31 at engine level v3.1 + review rounds 5–8). Each sibling was derived from this repo's engine (snapshot-first flow, per-source dedupe keys, the veto invariant, review queue, CRM and messaging adapters) with a fresh public history, per the same reasoning as ADR-0001, and a disjoint Fulcra namespace (`/raise/` + `Raise Touchpoint`, `/sales/` + `Sales Touchpoint`) so all three products can run on one account.
+
+**Decision**: the sibling repos diverge intentionally. There is no shared module, no cross-repo byte-alignment rule, and no obligation to keep contracts identical. Engine-level fixes (dedupe, veto, healing) get cherry-picked into the siblings by judgment when they apply; product-level features do not — a sibling may even diverge from an engine rail deliberately, by its own ADR (e.g. the sales flavor's gated contact creation).
+
+**Status**: accepted (2026-08-27, Nick; extended to the sales sibling 2026-08-31).
+
+**Consequences**: byte-alignment (CONTRIBUTING rule 1) remains strictly INTRA-repo; a fix to this repo's engine is not complete until someone has judged whether each sibling needs it (a checkbox in the fixing PR is enough); each sibling's claims stand on its own testing.md — this repo's live tests are evidence for its engine's design, never for a sibling's behavior.

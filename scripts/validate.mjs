@@ -41,13 +41,16 @@ const contract = read(CONTRACT);
 const demo = read(SKILLS[0]);
 const full = read(SKILLS[1]);
 const SHARED = [
-  ['payload signature', '`{"dedupe_key","person","company","channel":"call|meeting|email|event|other","summary","stage_noted","follow_ups":[],"producer","evidence","recorded_at"}`', [demo, full]],
+  ['payload signature', '`{"dedupe_key","person","company","channel":"call|meeting|email|event|message|other","summary","stage_noted","follow_ups":[],"producer","evidence","recorded_at"}`', [demo, full]],
   ["base key format", "`touch:<person-slug>:<YYYY-MM-DD>`", [demo, full]],
   ["provenance suffix format", "`[<producer> | <evidence> | <ISO-8601 timestamp with timezone>]`", [demo, full]],
-  ["channel enum", "`call`, `meeting`, `email`, `event`, `other`", [demo, full]],
+  ["channel enum", "`call`, `meeting`, `email`, `event`, `message`, `other`", [demo, full]],
   ["slug rule", "lowercase, hyphens, from person name (`jane-doe`); append company slug only when two people collide (`jane-doe-acme`)", [demo, full]],
   ["same-day ordinal", "-2", [demo, full]],
   ["stage-noted template line", "Stage noted:", [demo, full]],
+  ["snapshot zero-writes sentence", "The snapshot performs zero writes.", [demo, full]],
+  ["dual-surface calendar detection", "any Claude-side calendar connector", [demo, full]],
+  ["declined-events rule", "sources beat RSVP status", [demo, full]],
 ];
 // contract v2.1: the old "firm" payload token must be gone from contract-bearing files
 for (const [i, t] of [contract, demo, full].entries()) {
@@ -55,10 +58,11 @@ for (const [i, t] of [contract, demo, full].entries()) {
 }
 for (const [label, needle, targets] of SHARED) {
   if (!contract.includes(needle)) { fail(`contract drift: ${CONTRACT} itself lacks the canonical ${label}: ${needle}`); continue; }
+  const before = failures;
   targets.forEach((t, i) => {
     if (!t.includes(needle)) fail(`contract drift: ${SKILLS[i]} lacks the canonical ${label}`);
   });
-  ok(`contract: ${label} aligned`);
+  if (failures === before) ok(`contract: ${label} aligned`);
 }
 
 // ---------- 3. Required rails ----------
@@ -67,12 +71,28 @@ const RAILS = [
   ["no-credentials rail", "credentials, tokens, or secrets", [demo, full]],
   ["never-create-contacts rail", "Never create CRM contacts", [full]],
   ["reads-never-write rail", "Reads never write", [full]],
+  ["review queue convention", "review-queue.md", [full, contract]],
+  ["CRM-origin key form", "touch:attio-note:", [full, contract]],
+  ["calendar-origin key form", "touch:cal:", [demo, full, contract]],
+  ["batch consent language", "one collective yes", [full, contract]],
+  ["backfill hygiene rail", "Backfilled entries never create open follow-ups", [full, contract]],
+  ["circularity guard", "whose title already carries a", [full, contract]],
+  ["confidence tier (ambiguity parked)", "Never guessed", [full, contract]],
+  ["veto tombstone list", "## Vetoed keys", [full, contract]],
+  ["veto-set-first invariant", "Load the veto set first", [demo, full, contract]],
+  ["messaging capture reference", "messaging-capture.md", [full, contract]],
+  ["messaging-thread key form", "-thread:<id>", [full, contract]],
+  ["any-match-confirms rule", "already present in ANY representation", [full, contract]],
+  ["sweep watermarks", "## Sweep watermarks", [full, contract]],
+  ["commit ledger", "Parked for review", [demo, full, contract]],
+  ["read scoping", "every read these skills perform", [demo, full, contract]],
 ];
 for (const [label, needle, targets] of RAILS) {
+  const before = failures;
   targets.forEach((t) => {
     if (!t.includes(needle)) fail(`missing rail: ${label} ("${needle}") not found in a skill that requires it`);
   });
-  ok(`rail: ${label} present`);
+  if (failures === before) ok(`rail: ${label} present`);
 }
 
 // ---------- 4. No unshipped Fulcra features ----------
