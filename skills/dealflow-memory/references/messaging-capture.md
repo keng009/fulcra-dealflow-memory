@@ -50,4 +50,16 @@ Rules on top of the universal tier:
 - No stable per-source ids are assumed from a browser read → date-form keys with the confirm-on-match rule.
 - Pairs naturally with the scheduled sweep digest ([#38](https://github.com/keng009/fulcra-dealflow-memory/issues/38)) — observed threads become one-line Tend deltas, committed on one yes.
 
+### Account-risk posture — why this tier should never get the user restricted
+
+Honest framing first: LinkedIn's User Agreement (and WhatsApp's terms) prohibit automated access to an account, even read-only. Running this tier is the user's informed choice; the skill says so once, the first time it is scheduled, and never pretends the risk is zero. What keeps the risk small is restraint — behaving like the account owner glancing at an inbox, because that is literally what the session is:
+
+- **Inbox only.** Open the messaging inbox; never crawl profiles, search pages, company pages, or feeds. The tools that get restricted run the 75-profile-visits-and-50-messages-a-day pattern; an inbox glance is two orders of magnitude below that.
+- **Two windows a day, at most**, at the times the user set, with the schedule's natural minute-jitter; never back-to-back sessions. Skip the run entirely if the user is actively using that site in the same browser.
+- **Read only what is new.** Scroll only as far as the threads newer than the sweep watermark — typically a handful — then stop. Human dwell: seconds per thread, not a burst; one tab; one site at a time.
+- **The user's normal browser profile — nothing else.** No headless mode, no fresh or cloned profiles, no exported cookies, no proxies or IP rotation, no third-party session clouds. Those are exactly the signals platforms flag; the user's own browser on their own connection is the least suspicious client that exists.
+- **Zero writes on the platform.** No sends, replies, reactions, connection requests, "seen" marks, or profile views beyond the inbox itself — the drafts-only rail, restated.
+- **Stop on the first warning.** A CAPTCHA, an "unusual activity" or verification prompt, a security email, or any restriction notice → stop immediately, do not retry, disable the schedule, and tell the user exactly what appeared; the user re-enables it deliberately. After any anomaly (an unexpected page, a timeout, a layout the session doesn't recognize), skip the next scheduled run — back off rather than push.
+- **No decoy activity.** The tier does not simulate browsing (fake profile visits, scrambled click paths) to look human; it doesn't need to, because it isn't doing anything that needs disguising. Restraint is the mitigation; mimicry is not.
+
 Status: **designed-for, untested in this repo** — the pattern runs in production for the maintainer but has no sanitized `docs/testing.md` row yet; that row is what promotes it.

@@ -39,6 +39,9 @@ User-visible changes to the skill packet. Format follows [Keep a Changelog](http
 - **Privacy copy corrected**: the README now discloses that the snapshot reads recent transcripts and CRM notes/meetings whenever those tools are connected — reads only, independent of whether CRM sync is ever accepted. The old wording implied CRM reads only happened after accepting sync.
 - crm-sync dedupe principle now enumerates all five canonical key forms (date-form + ordinals, calendar event id, transcript id, CRM-note id, messaging-thread id) instead of the stale two.
 
+### Added (2026-09-10)
+- Browser-observation **account-risk posture** (engine-level, adapted from the sales sibling): inbox-only, two windows a day, read only what is new, the user's own browser profile only, stop-on-first-warning with backoff, no decoy activity, honest ToS disclosure.
+
 ### Changed
 - **Breaking (key scheme)**: calendar-derived commit keys are now the source event's stable id — `touch:cal:<event-id>` — instead of person+date ordinals, so re-runs and same-day re-orderings cannot shift keys. Data written under the date-form scheme stays valid: commits cross-scan both key forms and confirm on any match.
 - Declined calendar events are skipped unless another source (transcript, CRM note) shows the meeting happened — sources beat RSVP status.
