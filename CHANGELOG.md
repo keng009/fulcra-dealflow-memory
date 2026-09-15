@@ -54,6 +54,9 @@ User-visible changes to the skill packet. Format follows [Keep a Changelog](http
 ### Fixed (2026-09-15, HubSpot)
 - **HubSpot claim corrected** (dealflow #49): the official connector is now write-capable; crm-sync.md carries the slot table and title-less dedupe mechanics; live-tested in the sales sibling, untested under this flavor.
 
+### Added (2026-09-15, coexistence)
+- **Coexistence with other loggers** (ADR-0011 in the sales packet; engine-level): before any CRM note write, the contact's existing notes are scanned for the touchpoint's *source id* in any format (`[touch:…]`, `[otter:…]`, `Source:` lines, URLs), not just this packet's key — a hit from any other logger means skip, count as a duplicate, and name the note. Each packet stays complete on its own; two systems on one CRM never write the same conversation twice.
+
 ### Changed
 - **Breaking (key scheme)**: calendar-derived commit keys are now the source event's stable id — `touch:cal:<event-id>` — instead of person+date ordinals, so re-runs and same-day re-orderings cannot shift keys. Data written under the date-form scheme stays valid: commits cross-scan both key forms and confirm on any match.
 - Declined calendar events are skipped unless another source (transcript, CRM note) shows the meeting happened — sources beat RSVP status.

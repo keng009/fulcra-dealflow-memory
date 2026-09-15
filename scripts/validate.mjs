@@ -82,6 +82,7 @@ const RAILS = [
   ["batch consent language", "one collective yes", [full, contract]],
   ["backfill hygiene rail", "Backfilled entries never create open follow-ups", [full, contract]],
   ["circularity guard", "whose title already carries a", [full, contract]],
+  ["cross-system dedupe (coexistence)", "source id in any format", [full]],
   ["confidence tier (ambiguity parked)", "Never guessed", [full, contract]],
   ["veto tombstone list", "## Vetoed keys", [full, contract]],
   ["veto-set-first invariant", "Load the veto set first", [demo, full, contract]],

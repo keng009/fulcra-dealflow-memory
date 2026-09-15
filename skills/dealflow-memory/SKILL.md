@@ -245,7 +245,7 @@ Trigger: "log my call with Jane", "log my meeting with the Acme founders", "I ju
 
 9. **CRM note (only if sync was offered and accepted this session).** Consult `references/crm-sync.md` for the per-CRM mapping. The generic flow:
    - Look up the contact by email first, then by name. **No match → skip the CRM write and say so.** Never create a CRM contact.
-   - Scan the contact's existing note titles for the key. Present → skip and tell the user the CRM copy already exists.
+   - Scan the contact's existing note titles for the key — and titles plus body previews for the touchpoint's source id in any format (`[touch:…]`, `[otter:…]`, a `Source:` line, a URL): another logger may have recorded the same conversation. Present in either form → skip, say which note already exists, never delete or rewrite it.
    - Absent → create one note. Title: `<Channel> with <Person> — <YYYY-MM-DD>` ending with the key in square brackets, e.g. a title ending `[touch:jane-doe:2026-08-20]`. Body: a `Summary:` line, the follow-ups as a list (or `Follow-ups: none`), and a final `Source:` line carrying the provenance trio — `Source: dealflow-memory | <evidence> | <timestamp>` — exactly per the Note format section of `references/crm-sync.md`.
    - Where the CRM's tools support tasks linked to a contact, offer to create one task per follow-up.
    - Never edit CRM fields, stages, amounts, or any other attribute. Notes and tasks only. The CRM remains the user's system of record for pipeline; Fulcra holds the narrative and the typed records.
