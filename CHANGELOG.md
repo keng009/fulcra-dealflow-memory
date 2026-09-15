@@ -51,6 +51,9 @@ User-visible changes to the skill packet. Format follows [Keep a Changelog](http
 ### Added (2026-09-15, extension guide)
 - **Extension guide** (`references/extending.md`): how to add a messaging surface (paste row, connector slots M1–M4, browser tier), a notetaker (transcript slots T1–T4 with the timezone/participants/empty-recording checks), a CRM (pointer to the 8-slot protocol), or a calendar surface (attendee emails + stable ids) — plus an honest per-surface table (WhatsApp, Telegram, Signal, iMessage/SMS, Messenger/Instagram, LinkedIn, Slack/Discord) and the contribution checklist. Messenger/Instagram paste row added; README and both registries point to it; CI checks the pointer.
 
+### Fixed (2026-09-15, HubSpot)
+- **HubSpot claim corrected** (dealflow #49): the official connector is now write-capable; crm-sync.md carries the slot table and title-less dedupe mechanics; live-tested in the sales sibling, untested under this flavor.
+
 ### Changed
 - **Breaking (key scheme)**: calendar-derived commit keys are now the source event's stable id — `touch:cal:<event-id>` — instead of person+date ordinals, so re-runs and same-day re-orderings cannot shift keys. Data written under the date-form scheme stays valid: commits cross-scan both key forms and confirm on any match.
 - Declined calendar events are skipped unless another source (transcript, CRM note) shows the meeting happened — sources beat RSVP status.

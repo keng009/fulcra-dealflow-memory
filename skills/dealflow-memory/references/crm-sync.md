@@ -18,7 +18,7 @@ Map whatever CRM tools are connected onto seven capability slots (5–7 are opti
 | 6 | Associate a note with additional objects — deal/company/ticket (optional) | Note placement where the CRM's users actually look |
 | 7 | Delete a note (optional, rare) | Veto cleanup of an already-synced copy — where absent, the veto gives the manual step |
 
-- **Tier R (slots 1–3, read-only)**: powers the snapshot's tracked-vs-untracked check and CRM-note import into memory. A Tier R CRM is a full read source — never offer sync for it. Example: HubSpot's official Claude connector.
+- **Tier R (slots 1–3, read-only)**: powers the snapshot's tracked-vs-untracked check and CRM-note import into memory. A Tier R CRM is a full read source — never offer sync for it. (HubSpot's official connector was Tier R until mid-2026; it is now write-capable — always detect by capability.)
 - **Tier W (slots 1–4, +5 where present)**: everything above plus one-way sync (notes, optional tasks).
 
 A CRM not named in this file still works if its connector fills the slots — follow the principles and note format below, apply the untested-CRM honesty rule, and see "Add your CRM" at the end of this file to make it official.
@@ -75,21 +75,22 @@ Tested against a live Attio workspace via the official Attio connector (write pa
 - Connector tool names can vary slightly between connector versions; match by capability (contact search, list notes on a record, create note, create task) if the names above are not present.
 - The Attio connector has no delete tool. If the user wants a synced note removed, they delete it in the Attio UI.
 
-## HubSpot (Tier R via the official connector; Tier W untested)
+## HubSpot (Tier W — official connector is write-capable; untested under this flavor)
 
-Same principles; Tier W not yet verified against a live workspace.
+Claude's official HubSpot connector is **write-capable** as of September 2026 (`manage_crm_objects`; earlier versions were read-only — detect by capability, never by the connector's name or age). The note write was live-tested in the sales sibling (design evidence only, ADR-0007); under this flavor say "untested" on first use and read the first note back.
 
-| Slot | HubSpot surface |
+| Slot | HubSpot tool |
 |---|---|
-| 1–3 (Tier R) | Official connector: contact search + engagement reads — live today |
-| 4 | Note engagement create — requires a write-capable HubSpot MCP server (untested) |
-| 5 | Task engagement create — same requirement (untested) |
-| 6 | Note associations to deals/companies/tickets (untested) |
+| Search contacts | `search_crm_objects` (objectType CONTACT, query by email then name) |
+| List a contact's notes | `search_crm_objects` (objectType NOTE, `associatedWith` the contact; read `hs_body_preview`) |
+| Read a note body | `get_crm_objects` (NOTE, `hs_note_body`) |
+| Create a note | `manage_crm_objects` createRequest, objectType `notes`, `hs_note_body` + `hs_timestamp`, association to the CONTACT |
+| Create a task | `manage_crm_objects` createRequest, objectType `tasks` (designed, untested) |
+| Delete a note | none via the connector — manual in HubSpot |
 
-- **Important**: Claude's official HubSpot connector is **read-only** (verified 2026-08-21) — it cannot create notes, so it cannot carry this sync. HubSpot sync applies only when the user has a separate **write-capable HubSpot MCP server** connected. Detect by capability (can it create a note engagement?), not by connector name; with only the read-only connector present, say so and skip HubSpot sync entirely. The read-only connector still fills slots 1–3, so HubSpot works fully as a Tier R read source (tracked-vs-untracked check, CRM-note import).
-- **Closest primitive**: a note engagement associated with a contact.
-- HubSpot notes may not have a separate title field. If the tool's note primitive has no title, put the key as the **first line of the note body**, and run the dedupe scan against whatever note field the tools return when listing a contact's notes. The rule generalizes: the key must live in a field the tools can both write and read back.
-- On first use, verify the round trip: after creating the first note, read the contact's notes back and confirm the key is findable. If it is not, stop syncing and tell the user dedupe cannot be guaranteed with this setup.
+- **Title-less primitive**: HubSpot notes have no title field, so the dedupe key goes on the **first line of the note body** (`Call with Jane Doe — 2026-08-20 [touch:…]`) and the dedupe scan reads each associated note's body preview for the key string. The `Source:` line still closes the body.
+- The connector caps writes at 10 objects per call and requires the confirmation status flag; a note is created and associated in one call.
+- On first use in a new portal, verify the round trip: create the note, list the contact's notes, confirm the key is findable in the preview. If it is not, stop syncing and say dedupe cannot be guaranteed.
 
 ## Notion (Tier W — designed for, untested)
 
