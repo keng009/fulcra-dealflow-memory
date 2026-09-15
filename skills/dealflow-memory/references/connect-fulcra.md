@@ -8,7 +8,7 @@ Both skills in this packet read and write the user's own Fulcra account. No skil
 2. **Connector.** In Claude: **Customize → Connectors → add Fulcra**, then complete the sign-in it opens. Other chat products that accept an MCP URL use `https://mcp.fulcradynamics.com/mcp`.
 3. **Verify.** Start a new chat and ask: *"what's in my Fulcra data catalog?"* A catalog listing (even a near-empty one) means the connection works. Then install this packet's skill zip (**Customize → Skills → + Create skill → Upload a skill**) and say **"run the Fulcra dealflow demo"**.
 
-If a session that used to work starts returning 401/unauthorized errors, the connector's authorization has lapsed: reconnect it under Customize → Connectors and retry. The skills stop rather than fake success in that state.
+If a session that used to work starts returning 401/unauthorized errors, the connector's authorization has lapsed: reconnect it under Customize → Connectors and retry. Two traps here are silent: `read_file` can report "No file found" when the real cause is the expired token (call `list_files` — it shows the true 401), and the file store also throws transient 401s/timeouts that recover on one immediate retry. Retry once; if `list_files` still fails, the token has expired and only reconnecting fixes it. The skills stop rather than fake success in that state — and never write to a CRM while Fulcra is down, because the veto set and watermarks live in Fulcra.
 
 ## Path B — agent harnesses (Claude Code, OpenClaw, Hermes, Codex, and similar)
 

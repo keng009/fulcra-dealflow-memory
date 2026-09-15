@@ -25,6 +25,7 @@ Pace: steps 1–2 about two minutes, step 3 about five, steps 4–5 the rest. Sh
 - Everything you write lives under `/dealflow/` in the user's Fulcra account. Never touch any other folder.
 - Never write credentials, tokens, or secrets to any file.
 - Never fake success. If a tool is missing or a call fails, say exactly what happened and stop that step. Never simulate a write or invent output.
+- Two silent failures to know about (verified live): an empty calendar window from Fulcra's own calendar tool is not proof of a quiet day — check a Claude-side calendar connector too, and prefer whichever surface returns data; and a "No file found" from `read_file` can mask an expired connector token — call `list_files` to see the real error, retry once for a transient blip, and if the token has expired stop and ask the user to reconnect Fulcra rather than proceeding.
 - Scan before every write (step 3) — re-running this demo must never create duplicates.
 - All timestamps are ISO-8601 with the user's timezone. If you don't know their timezone, call `get_user_info`.
 - If the user provided sample data instead of a real touchpoint, label it as sample everywhere it lands — in conversation, in the file, and in the record.
