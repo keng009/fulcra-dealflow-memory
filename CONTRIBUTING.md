@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for working on the dealflow packet. This file is the 60-second orientation plus the three rules that aren't obvious from the outside.
+Thanks for working on the dealflow packet. This file is the 60-second orientation plus the five rules that aren't obvious from the outside.
 
 ## The 60-second tour
 
@@ -10,13 +10,17 @@ Thanks for working on the dealflow packet. This file is the 60-second orientatio
 - **Agent tooling config** is in [`AGENTS.md`](AGENTS.md) and `docs/agents/` (issues live in GitHub Issues).
 - These skills implement the patterns from [fulcra-for-agents](https://github.com/kubla/fulcra-for-agents): catalog inspection at bootstrap, repetition tolerance, derived context/provenance, durable handoff. Changes should stay recognizable as those patterns.
 
-## The three rules that matter
+## The five rules that matter
 
 1. **The contract is canonical, and embedded copies must not drift.** If you change a format (dedupe key, relationship-file template, payload schema, provenance suffix), change it in `conventions.md` *and* every place a skill embeds it — the demo's inline subset and the full skill's "Conventions summary" must stay byte-aligned with the contract. A drifted copy is a bug even if each file reads fine alone.
 
 2. **Every README capability claim must map to something a skill demonstrably does.** No roadmap language presented as product, no "tested" without a real test, untested CRMs stay labeled "should work — tell us". This repo's audience includes people deciding whether to invest in Fulcra; over-claiming here costs more than anywhere else.
 
 3. **Live platform features only.** Nothing may reference or depend on unshipped Fulcra features (at time of writing: Entries, file-system-updates, Groups). If the platform ships something new, a change may adopt it only once it's verified live.
+
+4. **Findings that outlive a session get an issue.** A review finding fixed on the spot may live in the fixing commit's message — but anything deferred, declined-with-reasoning, or fixed across sessions gets a GitHub issue (a per-review tracking issue with a disposition table is fine, closed once every row points somewhere). Chat threads and PR comments are where findings are discussed, not where they are stored: if it only exists there, the other maintainers can't see it. Examples: #32, #33.
+
+5. **A coverage claim cites the check.** Closing an issue (or writing a commit message) that claims something is "covered", "enforced", or "tested" must point at the specific thing that proves it — the `validate.mjs` anchor, the CI check, or the dated `docs/testing.md` row. No pointer, no claim; this repo has already shipped one closed issue whose claimed validator coverage didn't exist (#21, caught by review).
 
 ## Testing a change
 
@@ -41,6 +45,6 @@ Then the real test is running the thing:
 
 Releases give investors ready-to-upload zips instead of clone-and-zip-yourself:
 
-1. `node scripts/validate.mjs` is green and any live-behavior change is recorded in [`docs/testing.md`](docs/testing.md) (dated, sanitized).
+1. `node scripts/validate.mjs` is green, any live-behavior change is recorded in [`docs/testing.md`](docs/testing.md) (dated, sanitized), and [`CHANGELOG.md`](CHANGELOG.md) has the version's user-visible changes moved out of Unreleased.
 2. Tag and push: `git tag v0.x.y && git push origin v0.x.y` — the release workflow validates, packages both skills with the folder at the zip root, and publishes the release with both zips attached.
 3. Sanity-check the two assets install in Claude before sharing the release link.

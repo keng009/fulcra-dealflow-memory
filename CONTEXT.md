@@ -24,7 +24,7 @@ _Avoid_: structured record, annotation
 The custom Fulcra data type (proper noun) whose records are the typed records.
 
 **Channel**:
-How a touchpoint happened. Exactly one of: call, meeting, email, event, other.
+How a touchpoint happened. Exactly one of: call, meeting, email, event, message, other.
 
 ### The people
 
@@ -75,6 +75,50 @@ How much automation the full skill detected: Level 1 (Fulcra only, conversationa
 
 **CRM sync**:
 The optional, detected, one-way copy of touchpoints into the user's CRM as notes on matched contacts. Orthogonal to source levels; never creates contacts, never touches fields or stages.
+
+### The flow
+
+**Snapshot**:
+The read-only analysis of the user's recent deal flow (default 30 days), generated from connected sources and shown before anything is stored. Performs zero writes by definition.
+_Avoid_: report (that's the stored-memory review), audit
+
+**Commit**:
+Converting a snapshot (or deeper backfill) into stored memory on one collective yes (ADR-0005). High-confidence drafts are written; ambiguity is parked, never guessed.
+_Avoid_: sync (that's the CRM copy). "Import" is reserved for individual CRM-note-origin touchpoints, never the flow as a whole.
+
+**Backfill**:
+Committing touchpoints from past activity (calendar, transcripts, CRM notes) rather than logging them live. Activity-bounded, never CRM-bounded (ADR-0006); backfilled entries never create open follow-ups.
+
+**Review queue**:
+`/dealflow/review-queue.md` — where ambiguous commit items wait for the user's ruling, each with its evidence. Parked items exist nowhere else until ruled on.
+
+**Sourcing check**:
+The "seen this company before?" lookup at intro time: direct hits, the user's own past judgment, labeled inferences, and a read-only CRM presence check. A read; never writes.
+
+**Tend**:
+The ongoing mode after commit: small deltas offered in one line (including the opt-in scheduled sweep, cursored by watermarks), vetoes honored immediately, the review queue surfaced occasionally — seconds per day, never a project.
+
+**Veto**:
+The user striking a stored touchpoint ("that one's wrong"). The file entry is removed (versioned edit); because typed records have no per-record delete, the dedupe key goes on `handoff.md`'s `## Vetoed keys` list — the tombstone every read these skills perform excludes and no commit re-imports (readers outside the skills must apply the list themselves).
+
+**Commit ledger**:
+The itemized list shown immediately before the one collective yes — one line per draft (person, date, source, one-line gist), split into Will save and Parked for review. What makes ADR-0005's "read exactly what will be saved" literal.
+
+**Sweep watermark**:
+The per-source cursor in `handoff.md` (`## Sweep watermarks`) that a scheduled sweep reads and advances — only after its digest is fully resolved — so repeated sweeps never rediscover the same messages.
+
+**Auto-log**:
+The standing, revocable yes for unattended sweeps (ADR-0009): a `- auto-log: <sources>` line under `## Preferences` in `handoff.md`. With it, a sweep commits only high-confidence items and parks the rest; without it, the sweep digests and asks. Turned on by "auto-log my calls", off by "stop auto-logging". Ported from the sales sibling; untested under this flavor.
+
+**Sweep log**:
+The per-run receipt list in `handoff.md` (`## Sweep log`): one line per sweep — start time, sources, committed / parked / skipped-duplicate counts, failures. Newest 30 kept; older lines move to `sweep-log-archive.md`.
+
+**Email touchpoint**:
+A touchpoint with channel `email`, logged either by the user ("log my email with Jane" — date-form key) or by an opted-in sweep from a real email conversation with one external person (ADR-0010 — key `touch:<tool>-thread:<id>`, one per thread). Automated notifications are never email touchpoints; they are **inbound signals** in the digest.
+_Avoid_: inbox mirror, email log
+
+**Scheduled sweep task**:
+The single recurring task named `dealflow-memory-sweep` that the full skill builds on "make this automatic" wherever the harness exposes a scheduling tool (Tend rule 7, `references/scheduling.md`). It triggers a sweep; it changes nothing about what a sweep may write.
 
 ### The packet
 
