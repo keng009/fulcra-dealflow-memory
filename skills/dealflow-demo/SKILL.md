@@ -37,7 +37,7 @@ Check whether the Fulcra tools are available in this session: `get_data_catalog`
 
 If they are not, stop the demo entirely and say:
 
-> To run this demo I need your Fulcra account connected: in Claude, open Customize → Connectors and add Fulcra, then say "run the Fulcra dealflow demo" again. No Fulcra account yet? Create one at fulcra.ai first.
+> To run this demo I need your Fulcra account connected. No account yet? Create one at fulcra.ai first (an empty one is fine). Then in Claude, open Customize → Connectors, add Fulcra, and say "run the Fulcra dealflow demo" again. Using an agent harness instead of Claude's app? Install Fulcra's official `fulcra-get-started` skill (github.com/fulcradynamics/agent-skills) and it will walk your agent through connecting.
 
 Do not proceed past a missing connector. Do not describe what the demo *would* have done.
 

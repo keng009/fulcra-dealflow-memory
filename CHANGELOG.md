@@ -42,6 +42,9 @@ User-visible changes to the skill packet. Format follows [Keep a Changelog](http
 ### Added (2026-09-10)
 - Browser-observation **account-risk posture** (engine-level, adapted from the sales sibling): inbox-only, two windows a day, read only what is new, the user's own browser profile only, stop-on-first-warning with backoff, no decoy activity, honest ToS disclosure.
 
+### Added (2026-09-15)
+- **Connecting Fulcra guide** (`references/connect-fulcra.md`): both setup paths — Claude's app (account → Customize → Connectors → verify) and agent harnesses via Fulcra's official `fulcra-get-started` / `fulcra-connect` skills — with the honest line that no skill can create the account or authorize the connector itself. Both preflights and the README install steps point to it; CI now requires the pointer in every skill.
+
 ### Changed
 - **Breaking (key scheme)**: calendar-derived commit keys are now the source event's stable id — `touch:cal:<event-id>` — instead of person+date ordinals, so re-runs and same-day re-orderings cannot shift keys. Data written under the date-form scheme stays valid: commits cross-scan both key forms and confirm on any match.
 - Declined calendar events are skipped unless another source (transcript, CRM note) shows the meeting happened — sources beat RSVP status.

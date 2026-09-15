@@ -20,7 +20,7 @@ Start with the demo if you're deciding; start with `dealflow-memory` if you're a
 One guided session — about ten minutes once installed. The skill inspects your Fulcra data catalog, builds a **read-only snapshot of your last 30 days of deal flow** from whatever you've connected (calendar, meeting tools), saves it as memory on a single yes — files versioned; the full skill adds a veto flow that can strike any saved item later — and generates a prep brief from what it just stored. Nothing is written until you say so; with no sources connected, it falls back to capturing one touchpoint conversationally. Think of it as the hello-world; `dealflow-memory` below is the product.
 
 1. Create a Fulcra account at [fulcra.ai](https://fulcra.ai) if you don't have one. An empty account is fine — the demo works without prior data.
-2. In Claude, open **Customize → Connectors** and connect **Fulcra**.
+2. In Claude, open **Customize → Connectors** and connect **Fulcra**. First time, or using an agent harness instead of Claude's app? [Connecting Fulcra](skills/dealflow-memory/references/connect-fulcra.md) has both paths — and points at Fulcra's official `fulcra-get-started` skill, which lets your agent drive the connection.
 3. Download `dealflow-demo.zip` from the [latest release](https://github.com/keng009/fulcra-dealflow-memory/releases/latest) *(currently v0.2.0 — see the pre-release note above)* (or zip the `skills/dealflow-demo` folder yourself) and upload it in Claude under **Customize → Skills → + Create skill → Upload a skill**. If Skills isn't visible, enable it under **Settings → Capabilities** first.
 4. Start a new chat and say: **"run the Fulcra dealflow demo"**.
 

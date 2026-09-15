@@ -113,7 +113,7 @@ A filled example:
 
 Run this before acting on any request. Keep the spoken output short — two or three sentences, not a status report.
 
-1. **Preflight.** Confirm the Fulcra tools are available (`get_data_catalog`, `get_user_info`, `list_files`, `read_file`, `write_file`, `create_data_type`, `record_data`, `get_records`, `delete_file`). If they are not, stop and say exactly what to do: "Fulcra isn't connected. In Claude, go to Customize → Connectors and connect Fulcra, then try again." Never fake success or pretend data exists.
+1. **Preflight.** Confirm the Fulcra tools are available (`get_data_catalog`, `get_user_info`, `list_files`, `read_file`, `write_file`, `create_data_type`, `record_data`, `get_records`, `delete_file`). If they are not, stop and say exactly what to do, per `references/connect-fulcra.md`: in Claude's app, "Fulcra isn't connected. Create an account at fulcra.ai if you don't have one, then go to Customize → Connectors and connect Fulcra, and try again"; in an agent harness, point them to Fulcra's official `fulcra-get-started` skill (github.com/fulcradynamics/agent-skills), which walks the agent through connecting. Never fake success or pretend data exists.
 
 2. **Timezone.** Call `get_user_info` and use the user's timezone for every timestamp you write (provenance suffixes, `recorded_at`, record timestamps). Always pass a timezone when a Fulcra tool takes one.
 
