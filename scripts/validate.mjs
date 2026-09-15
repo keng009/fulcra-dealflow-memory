@@ -86,6 +86,7 @@ const RAILS = [
   ["veto tombstone list", "## Vetoed keys", [full, contract]],
   ["veto-set-first invariant", "Load the veto set first", [demo, full, contract]],
   ["messaging capture reference", "messaging-capture.md", [full, contract]],
+  ["extension guide referenced", "extending.md", [full]],
   ["messaging-thread key form", "-thread:<id>", [full, contract]],
   ["any-match-confirms rule", "already present in ANY representation", [full, contract]],
   ["sweep watermarks", "## Sweep watermarks", [full, contract]],

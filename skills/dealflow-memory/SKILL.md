@@ -187,7 +187,7 @@ Run this before acting on any request. Keep the spoken output short — two or t
 
    - **Level 1 — Fulcra only.** Conversational capture and recall work fully.
    - **Level 2 — + calendar.** Calendar is detected on EITHER surface, by capability: Fulcra's `get_calendar_events` returns events (catalog shows calendar data, or a ±7-day probe returns events), OR any Claude-side calendar connector is among the connected tools. Use whichever is present; prefer the one with data. Unlocks: the snapshot, touchpoints corroborated against real meetings, and "prep me for tomorrow" reading the actual calendar.
-   - **Level 3 — + transcript source.** A transcript tool (Otter, Zoom, Fireflies, or similar) is among the connected tools. Unlocks: logging touchpoints straight from meeting transcripts, and a richer snapshot.
+   - **Level 3 — + transcript source.** A transcript tool (Otter, Zoom, Fireflies, or any tool filling the transcript slots in `references/extending.md`) is among the connected tools. Unlocks: logging touchpoints straight from meeting transcripts, and a richer snapshot.
 
    State the detected level in one line. Save the what-connecting-more-would-unlock line for AFTER the session's first moment of delivered value (a snapshot presented, a capture logged, a brief given) — for example: "Connect a transcript tool like Otter and I can log meetings straight from transcripts." Never open with an upsell; do not lecture; do not repeat it if the session already covered it.
 

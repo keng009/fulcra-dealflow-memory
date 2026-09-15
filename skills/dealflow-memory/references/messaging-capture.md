@@ -16,7 +16,7 @@ Rules, all apps:
 
 ## Per-app paste-format notes
 
-These help extraction; none are required knowledge — when a format doesn't match, fall back to reading the paste as plain conversation.
+These help extraction; none are required knowledge — when a format doesn't match, fall back to reading the paste as plain conversation. An app not listed here works the same way; to register it (paste-format row, connector slots, test row), see `extending.md`.
 
 | App | What a paste usually looks like | Notes |
 |---|---|---|
@@ -24,6 +24,7 @@ These help extraction; none are required knowledge — when a format doesn't mat
 | Telegram | `Name, [dd.mm.yy hh:mm]` headers, or JSON from Desktop export | Forwarded-message headers name a third party — attribute carefully. |
 | Signal / iMessage / SMS | Usually screen-copied plain text, no timestamps | Date will usually need the user. |
 | LinkedIn DMs | `Name  ·  time` headers with profile taglines mixed in | The tagline ("GP at …") is useful `company` evidence. |
+| Facebook Messenger / Instagram DMs | "Download your information" export (JSON/HTML) or screen-copied plain text | Export carries timestamps; screen copies usually don't — ask for the date. |
 | Slack / Discord DMs | `Name  hh:mm PM` headers, thread replies indented | If a Slack tool is connected, prefer the connector tier below. |
 | WeChat / other | Plain text | Treat as unlabeled conversation. |
 

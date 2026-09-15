@@ -95,6 +95,10 @@ Each row is behavior you can watch one of the two skills perform, mapped to the 
 
 The data contract behind all of it — file formats, dedupe keys, the record schema, the provenance rule — is written once, in [`skills/dealflow-memory/references/conventions.md`](skills/dealflow-memory/references/conventions.md). Both skills conform to it.
 
+## Extend it — your messaging app, notetaker, or CRM
+
+Everything here detects tools by capability, so an app that isn't named still works — paste a thread from any messenger and it logs. To make a source official (a paste-format row for Messenger or Signal, connector slots for a Telegram or iMessage reader, a new notetaker's timezone quirk, a calendar surface, or a CRM), [`references/extending.md`](skills/dealflow-memory/references/extending.md) has the per-source slots, the test to run, and the one PR to open. No claims without a testing row — "designed-for, untested" is an honest label here.
+
 ## Why Fulcra?
 
 Because memory that lives inside one chat product is a silo, and memory you can't query is a diary. These skills use Fulcra as the account-level store that makes the rest honest: versioned files you can read, typed records software can query, and — the load-bearing part — **the same memory readable from every assistant you connect over MCP**, so nothing gets re-taught. Where Fulcra is necessary, where it's merely convenient, and where the platform has limits the skills admit to: [docs/why-fulcra.md](docs/why-fulcra.md).
