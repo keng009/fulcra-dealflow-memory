@@ -74,6 +74,7 @@ const RAILS = [
   ["silent-failure traps: empty calendar is not a quiet day", "never read as a quiet day", [full]],
   ["silent-failure traps: 401 diagnosed via list_files", "list_files", [demo, full]],
   ["silent-failure traps: Otter Pacific timestamps", "Pacific", [full]],
+  ["brokered-intro rule", "non-broker attendee email", [full, contract]],
   ["Fulcra connect guide referenced", "connect-fulcra.md", [full]],
   ["official fulcra-get-started pointer", "fulcra-get-started", [demo, full]],
   ["review queue convention", "review-queue.md", [full, contract]],
@@ -89,8 +90,18 @@ const RAILS = [
   ["messaging capture reference", "messaging-capture.md", [full, contract]],
   ["extension guide referenced", "extending.md", [full]],
   ["messaging-thread key form", "-thread:<id>", [full, contract]],
+  ["plain-words rail", "Plain words", [demo, full]],
+  ["daily-rhythm trigger: prep my day", "prep my day", [full]],
+  ["daily-rhythm trigger: what do I owe", "what do I owe people", [full]],
+  ["auto-log plain on/off phrases", "stop auto-logging", [full]],
+  ["scheduling by capability (rule 7)", "scheduling.md", [full]],
+  ["scheduling: no second task", "dealflow-memory-sweep", [full]],
   ["any-match-confirms rule", "already present in ANY representation", [full, contract]],
   ["sweep watermarks", "## Sweep watermarks", [full, contract]],
+  ["auto-log opt-in (ADR-0009)", "auto-log", [full, contract]],
+  ["sweep receipts", "## Sweep log", [full, contract]],
+  ["email source opt-in (ADR-0010)", "signals, not conversations", [full]],
+  ["email thread key form", "gmail-thread", [full, contract]],
   ["commit ledger", "Parked for review", [demo, full, contract]],
   ["read scoping", "every read these skills perform", [demo, full, contract]],
 ];
@@ -101,6 +112,13 @@ for (const [label, needle, targets] of RAILS) {
   });
   if (failures === before) ok(`rail: ${label} present`);
 }
+
+// ---------- 3b. No pipeline machinery in this flavor (the sales sibling's, never ported) ----------
+for (const [i, t] of [demo, full, contract].entries()) {
+  const path = [...SKILLS, CONTRACT][i];
+  if (t.includes("[<pipeline>]") || t.includes("email-pipeline:")) fail(`${path}: carries the sales sibling's pipeline machinery (this flavor has no pipelines)`);
+}
+ok("no pipeline machinery in this flavor");
 
 // ---------- 4. No unshipped Fulcra features ----------
 for (const path of [...SKILLS, CONTRACT, "README.md", "skills/dealflow-memory/references/crm-sync.md"]) {

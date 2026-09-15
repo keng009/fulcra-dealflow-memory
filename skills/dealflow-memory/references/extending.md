@@ -1,4 +1,4 @@
-# Extending the packet — add a messaging app, a notetaker, a CRM, or a calendar
+# Extending the packet — add a messaging app, a notetaker, a mail tool, a CRM, or a calendar
 
 Everything in this packet detects tools **by capability, never by name**, so most additions need no change to the skill at all — they need a registry entry and a test row so the next user knows what to expect. This file is the one place that says how, for each kind of source. Two rules bind every addition: **reads never write** (no sends, replies, reactions, or "seen" marks on any platform), and **no claim without a `docs/testing.md` row** (CONTRIBUTING rule 2 — "designed-for, untested" is an honest label, not a failure).
 
@@ -29,6 +29,10 @@ Where each surface honestly stands today:
 Source Level 3 is any tool that fills these slots: **T1** list transcripts in a date window (id, title, start time, participants); **T2** fetch the summary and action items; **T3** fetch the full transcript; **T4** a stable transcript id → key `touch:<transcript-id>` (the tool's own id; when two tools are connected, the evidence line names the tool so the ids stay attributable). T1 + T4 make it a snapshot source; T2 makes it a capture source; T3 is for quotes and deeper distillation.
 
 Three checks before trusting a new tool, learned the hard way: **timezone** — verify one transcript's start time against its calendar event before matching anything (Otter reports Pacific regardless of the user's zone); **participants** — scheduler-brokered calls often list only the broker, so identity comes from the calendar attendee email; **empty recordings** — a transcript with no content means capture failed, not that the meeting didn't happen. Test: log one meeting from the tool, log it again and confirm the skip, record the row, and add the tool to the Level 3 examples in the skill with its timezone behavior noted.
+
+## 2b. Mail tools (Gmail, Outlook, …)
+
+Email is an opt-in sweep source (ADR-0010). A mail tool qualifies with three slots: **E1** search threads by date (newer-than a watermark); **E2** read a thread (sender, recipients, date, body); **E3** a stable thread id → key `touch:<tool>-thread:<id>`. Gmail's official connector fills all three (`search_threads`, `get_thread`) — live-tested only in the sales sibling; untested under this flavor. Reading mail never sends, replies, labels, or marks anything. The signals-vs-conversations line in the skill is what keeps this from mirroring an inbox: a deck-submission form, a data-room invite, or a newsletter is surfaced in the digest as a signal, never logged as a touchpoint.
 
 ## 3. CRMs
 

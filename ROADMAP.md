@@ -17,7 +17,9 @@ The contract now qualifies tools by capability, not by name, with community prom
 ## Toward automatic — without losing consent
 
 - **Scheduled message-sweep digest** ([#38](https://github.com/keng009/fulcra-dealflow-memory/issues/38)): the behavior is now specified in the full skill (Tend rule 5) — a recurring sweep presenting a one-yes Tend delta; what remains is the live scheduled run that promotes it from designed to tested.
-- **Zero-touch auto-commit** stays explicitly out of scope until it gets its own ADR: it changes the consent posture (ADR-0005) and will be a per-user opt-in decision, not a default.
+- Unattended auto-log: **accepted** as [ADR-0009](docs/adr/0009-unattended-auto-log.md) (2026-09-15, ported from the sales sibling where it was accepted and first live-run) and implemented as Tend rule 6 — a standing, revocable, per-source yes with high-confidence-only eligibility, receipts, and a dead-Fulcra stop. Off by default; never a default. Designed/untested under this flavor until the four testing.md scenarios run.
+- Email as a sweep source: **accepted** as [ADR-0010](docs/adr/0010-email-as-a-source.md) (2026-09-15, same port) — opt-in, read-only, thread-keyed, notifications surfaced as signals. Designed/untested under this flavor.
+- The skill builds the schedule (Tend rule 7, [`scheduling.md`](skills/dealflow-memory/references/scheduling.md)): "make this automatic" creates a single `dealflow-memory-sweep` task where the harness has a scheduling tool. Designed/untested under this flavor — this is the live scheduled run [#38](https://github.com/keng009/fulcra-dealflow-memory/issues/38) has been waiting for.
 
 ## Team pipelines — shared memory across a partnership
 

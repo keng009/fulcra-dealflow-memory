@@ -133,6 +133,21 @@ Run on the maintainer's real accounts against the live `/dealflow/` store (21 to
 | Digest resolution with zero commit candidates | Pass — no consent prompt needed (nothing to store), parked items are the resolution |
 | Failure-safe ordering: watermark write performed last, only after full resolution | Pass — `## Sweep watermarks` created with one ISO-8601 line per source; read back intact alongside `## Vetoed keys` |
 
+## 2026-09-15 — Engine ports from the sales sibling (designed; untested under this flavor)
+
+Ported at engine level per ADR-0007 from [fulcra-sales-memory](https://github.com/keng009/fulcra-sales-memory), whose own [testing matrix](https://github.com/keng009/fulcra-sales-memory/blob/main/docs/testing.md) carries the 2026-09-15 live rows for each (under the `/sales/` flavor, with pipelines). That evidence supports the **design**; it is never evidence for this packet's behavior. Every row below is **designed / untested** until a live run under `/dealflow/` replaces it.
+
+| Surface | Status |
+|---|---|
+| Unattended auto-log (ADR-0009, Tend rule 6) — eligible items commit without a yes, evidence `, auto-log`, receipt + digest | **Untested under this flavor** (sales sibling: pass 2026-09-15) |
+| Unattended auto-log — ineligible items park (no-summary recording, attendee-less meeting, broker-only participant list) | **Untested under this flavor** (sales sibling: pass 2026-09-15, calendar-only variant) |
+| Unattended auto-log — dead Fulcra → STOP, zero writes, no watermark move | **Untested** (also untested in the sales sibling) |
+| Unattended auto-log — revocation (line removed → next run digests instead) | **Untested** (also untested in the sales sibling) |
+| Unattended auto-log — CRM note only under a `crm:` preference line; contacts never created | **Untested under this flavor** (the `crm:` gate is this packet's adaptation — the sales sibling maps CRMs per pipeline via `crm-setup`) |
+| Email as a source (ADR-0010) — eligible thread auto-logged as `touch:gmail-thread:<id>`; notification surfaced as a signal, not logged; noise sender filtered; re-sweep skips the captured thread | **Untested under this flavor** (sales sibling: pass 2026-09-15 except the re-sweep skip) |
+| Scheduled task built by the skill (Tend rule 7) — single `dealflow-memory-sweep` task, run fires and completes a sweep | **Untested under this flavor** (sales sibling: pass 2026-09-15 via the desktop app's scheduling tool) |
+| Daily-rhythm phrases ("prep my day", "what do I owe people", "sweep", "show me the review queue") and the plain-words rail | **Untested under this flavor** (prose rules over already-tested read paths) |
+
 ## Untested surfaces (labeled accordingly in-product)
 
-HubSpot (official connector is read-only — sync requires a write-capable MCP server, untested), Notion (official connector read/write, block-append scope untested), Affinity (official connector read/write, untested). See issues #4 and #5.
+HubSpot Tier W (official connector now write-capable — live-tested in the sales sibling, untested under this flavor), Notion (official connector read/write, block-append scope untested), Affinity (official connector read/write, untested). See issues #4 and #5.

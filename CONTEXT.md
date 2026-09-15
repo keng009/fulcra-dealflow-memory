@@ -107,6 +107,19 @@ The itemized list shown immediately before the one collective yes — one line p
 **Sweep watermark**:
 The per-source cursor in `handoff.md` (`## Sweep watermarks`) that a scheduled sweep reads and advances — only after its digest is fully resolved — so repeated sweeps never rediscover the same messages.
 
+**Auto-log**:
+The standing, revocable yes for unattended sweeps (ADR-0009): a `- auto-log: <sources>` line under `## Preferences` in `handoff.md`. With it, a sweep commits only high-confidence items and parks the rest; without it, the sweep digests and asks. Turned on by "auto-log my calls", off by "stop auto-logging". Ported from the sales sibling; untested under this flavor.
+
+**Sweep log**:
+The per-run receipt list in `handoff.md` (`## Sweep log`): one line per sweep — start time, sources, committed / parked / skipped-duplicate counts, failures. Newest 30 kept; older lines move to `sweep-log-archive.md`.
+
+**Email touchpoint**:
+A touchpoint with channel `email`, logged either by the user ("log my email with Jane" — date-form key) or by an opted-in sweep from a real email conversation with one external person (ADR-0010 — key `touch:<tool>-thread:<id>`, one per thread). Automated notifications are never email touchpoints; they are **inbound signals** in the digest.
+_Avoid_: inbox mirror, email log
+
+**Scheduled sweep task**:
+The single recurring task named `dealflow-memory-sweep` that the full skill builds on "make this automatic" wherever the harness exposes a scheduling tool (Tend rule 7, `references/scheduling.md`). It triggers a sweep; it changes nothing about what a sweep may write.
+
 ### The packet
 
 **The demo**:
